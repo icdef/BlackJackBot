@@ -60,7 +60,7 @@ public class GameFlow extends ListenerAdapter {
             channel.sendMessage("BlackJack game started. Player can type join to join the game. Type start to start the round").queue();
         }
         // quitting should not be possible during betting or an active game. Also only players who are participating should be able to quit the whole blackjack session
-        if (playState != PlayState.PLAYING && playState != PlayState.BETTING && playerList.contains(player) && input.equals("quit")) {
+        if (playState != PlayState.PLAYING && playState != PlayState.BETTING && (playerList.contains(player) || playerList.isEmpty()) && input.equals("quit")) {
             playState = PlayState.NOT_PLAYING;
             playerList.clear();
             channel.sendMessage("BlackJack game is over! Bot is in standby").queue();
