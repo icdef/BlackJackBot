@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class GameActions {
     private final Player dealer = new Player("Dealer");
@@ -104,7 +105,6 @@ public class GameActions {
         builder.addField(addActiveToNameWhenActivePlayer(dealer), dealer.toString(), false);
         for (Player p : players) {
             builder.addField(addActiveToNameWhenActivePlayer(p), p.toString(), false);
-            builder.setColor(Color.black);
             Player splitPlayer = splitPlayers.get(p);
             if (splitPlayer != null) {
                 builder.addField(addActiveToNameWhenActivePlayer(splitPlayer), splitPlayer.toString(), false);
@@ -148,7 +148,9 @@ public class GameActions {
 
 
         playersInGame.push(dealer);
-        for (Player player : players) {
+        List<Player> playerSetAsList = new LinkedList<>(players);
+        Collections.reverse(playerSetAsList);
+        for (Player player : playerSetAsList) {
             playersInGame.push(player);
         }
         activePlayer = playersInGame.pop();
@@ -183,14 +185,20 @@ public class GameActions {
      */
     public void dealerPlay(Message message) {
         while (activePlayer.getCurrentHandValue() < 17) {
-            activePlayer.addCardToHand(deck.pop());
-            if (activePlayer.getHandSize() == 2 && activePlayer.getCurrentHandValue() == 21) {
-                activePlayer.setBlackJack(true);
+            try {
+                Thread.sleep(1000);
+                activePlayer.addCardToHand(deck.pop());
+                if (activePlayer.getHandSize() == 2 && activePlayer.getCurrentHandValue() == 21) {
+                    activePlayer.setBlackJack(true);
+                }
+                if (activePlayer.getCurrentHandValue() > 21) {
+                    activePlayer.setBusted(true);
+                }
+                message.editMessage(currentRound()).complete();
             }
-            if (activePlayer.getCurrentHandValue() > 21) {
-                activePlayer.setBusted(true);
+            catch (InterruptedException e ) {
+                System.out.println("Dealer got interrupted");
             }
-            message.editMessage(currentRound()).complete();
         }
 
 

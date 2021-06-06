@@ -46,6 +46,8 @@ public class RegisterReaction extends ListenerAdapter {
 
     @Override
     public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
+        if (event.getUser().isBot())
+            return;
         if (!event.getTextChannel().getId().equals(Main.REGISTER_CHANNEL_ID))
             return;
         if (event.getReaction().getReactionEmote().getAsCodepoints().equalsIgnoreCase("U+2705")) {
@@ -58,6 +60,8 @@ public class RegisterReaction extends ListenerAdapter {
 
     @Override
     public void onMessageReactionRemove(@NotNull MessageReactionRemoveEvent event) {
+        if (event.getUser().isBot())
+            return;
         if (!event.getTextChannel().getId().equals(Main.REGISTER_CHANNEL_ID))
             return;
         if (event.getReaction().getReactionEmote().getAsCodepoints().equalsIgnoreCase("U+2705")) {

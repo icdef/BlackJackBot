@@ -22,8 +22,8 @@ import java.util.*;
 
 
 public class Main {
-    public static final String REGISTER_CHANNEL_ID = "850054045271064596";
-    public static final String PLAY_CHANNEL_ID = "850091413923692568";
+    public static final String REGISTER_CHANNEL_ID = "851209582205468693";
+    public static final String PLAY_CHANNEL_ID = "851209654146957312";
     public static final String FILE_REGISTERED_PLAYERS_PATH = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + File.separator + "java" + File.separator + "main" + File.separator + "AllPlayers.csv";
     private static final Map<String, Player> registeredPlayers = new HashMap<>();
 
@@ -81,11 +81,11 @@ public class Main {
         t1.start();
         createEmbedIfNeeded(jda);
         Map<String, Player> alreadyRegisteredPlayers = readAlreadyRegisteredPlayers(fileRegisteredPlayers);
-        List<Player> playerList = new ArrayList<>();
+        Set<Player> playerSet = new HashSet<>();
         PlayState playState = PlayState.NOT_PLAYING;
         GameActions gameActions = new GameActions(jda);
         jda.addEventListener(new RegisterReaction(alreadyRegisteredPlayers, fileRegisteredPlayers),
-                new GameFlow(playState, playerList, alreadyRegisteredPlayers, gameActions), new Help());
+                new GameFlow(playState, playerSet, alreadyRegisteredPlayers, gameActions), new Help());
 
 
     }
