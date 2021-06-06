@@ -11,20 +11,20 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class GameFlow extends ListenerAdapter {
 
     private PlayState playState;
-    private List<Player> playerList;
+    private Set<Player> playerSet;
     private Map<String, Player> registeredPlayer;
     private NumberFormat nf = new DecimalFormat("##.###");
     private GameActions gameActions;
 
-    public GameFlow(PlayState playState, List<Player> playerList, Map<String, Player> registeredPlayer, GameActions gameActions) {
+    public GameFlow(PlayState playState, Set<Player> playerSet, Map<String, Player> registeredPlayer, GameActions gameActions) {
         this.playState = playState;
-        this.playerList = playerList;
+        this.playerSet = playerSet;
         this.registeredPlayer = registeredPlayer;
         this.gameActions = gameActions;
     }
@@ -35,7 +35,7 @@ public class GameFlow extends ListenerAdapter {
      * @return true when all placed a bet. Otherwise false
      */
     private boolean allPlayersBet() {
-        for (Player player : playerList) {
+        for (Player player : playerSet) {
             if (player.getBetAmount() == 0)
                 return false;
         }
@@ -60,23 +60,23 @@ public class GameFlow extends ListenerAdapter {
             channel.sendMessage("BlackJack game started. Player can type join to join the game. Type start to start the round").queue();
         }
         // quitting should not be possible during betting or an active game. Also only players who are participating should be able to quit the whole blackjack session
-        if (playState != PlayState.PLAYING && playState != PlayState.BETTING && (playerList.contains(player) || playerList.isEmpty()) && input.equals("quit")) {
+        if (playState != PlayState.PLAYING && playState != PlayState.BETTING && (playerSet.contains(player) || playerSet.isEmpty()) && input.equals("quit")) {
             playState = PlayState.NOT_PLAYING;
-            playerList.clear();
-            channel.sendMessage("BlackJack game is over! Bot is in standby").queue();
+            playerSet.clear();
+            channel.sendMessage("BlackJack is over! Bot is in standby").queue();
         }
         if (playState == PlayState.CHOOSING_PLAYER && input.equals("join")) {
             if (player == null) {
                 channel.sendMessage("Please register yourself first").queue();
-            } else if (playerList.contains(player)) {
+            } else if (playerSet.contains(player)) {
                 channel.sendMessage("You already joined the table").queue();
             } else {
-                playerList.add(player);
+                playerSet.add(player);
                 channel.sendMessage("You joined the table").queue();
             }
         }
         if ((playState == PlayState.CHOOSING_PLAYER) && input.equals("leave")) {
-            if (playerList.remove(player)) {
+            if (playerSet.remove(player)) {
                 channel.sendMessage("You left the table").queue();
             } else {
                 channel.sendMessage("You were not on the table").queue();
@@ -84,9 +84,9 @@ public class GameFlow extends ListenerAdapter {
         }
         // initiates the bet state when at least one player joined the table
         if (playState == PlayState.CHOOSING_PLAYER && input.equals("start")) {
-            if (playerList.isEmpty()) {
+            if (playerSet.isEmpty()) {
                 channel.sendMessage("No players have joined yet").queue();
-            } else if (!playerList.contains(player)) {
+            } else if (!playerSet.contains(player)) {
                 channel.sendMessage("You did not join the game").queue();
             } else {
                 channel.sendMessage("Round starts").queue();
@@ -95,7 +95,7 @@ public class GameFlow extends ListenerAdapter {
             }
         }
         if (playState == PlayState.BETTING && inputSplitted[0].equals("bet")) {
-            if (player != null && playerList.contains(player)) {
+            if (player != null && playerSet.contains(player)) {
                 try {
                     double bet = Double.parseDouble(inputSplitted[1]);
                     if (bet > player.getMoney()) {
@@ -117,7 +117,7 @@ public class GameFlow extends ListenerAdapter {
                 channel.sendMessage("All players bet. Starting round").queue();
                 playState = PlayState.PLAYING;
                 gameActions.setChannel(channel);
-                gameActions.setPlayers(playerList);
+                gameActions.setPlayers(playerSet);
                 gameActions.setUp();
                 if (gameActions.checkForBlackJacks()) {
                     roundOver(channel, event.getJDA());
@@ -166,7 +166,7 @@ public class GameFlow extends ListenerAdapter {
         builder.setTitle("ROUND OVER");
 
         gameActions.calculatePayout();
-        for (Player p : playerList) {
+        for (Player p : playerSet) {
             String fieldName = p.getNameNoTag() + (p.getWonAmount() > 0 ? " won " + nf.format(p.getWonAmount()) + "$" :
                     p.getWonAmount() < 0 ? " lost " + nf.format(Math.abs(p.getWonAmount())) + "$" : " push");
             builder.addField(fieldName, "Current balance: " + nf.format(p.getMoney()) + "$", false);

@@ -10,15 +10,14 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.awt.*;
-import java.util.List;
 import java.util.*;
 
 public class GameActions {
     private final Player dealer = new Player("Dealer");
     private final Deque<Player> playersInGame = new ArrayDeque<>();
     private final JDA jda;
-    private List<Player> players;
-    private Map<Player, Player> splitPlayers = new HashMap<>();
+    private Set<Player> players;
+    private final Map<Player, Player> splitPlayers = new HashMap<>();
     private TextChannel channel;
     private Deque<Card> deck;
     private Player activePlayer;
@@ -27,7 +26,7 @@ public class GameActions {
         this.jda = jda;
     }
 
-    public void setPlayers(List<Player> players) {
+    public void setPlayers(Set<Player> players) {
         this.players = players;
     }
 
@@ -149,8 +148,8 @@ public class GameActions {
 
 
         playersInGame.push(dealer);
-        for (int i = players.size() - 1; i >= 0; i--) {
-            playersInGame.push(players.get(i));
+        for (Player player : players) {
+            playersInGame.push(player);
         }
         activePlayer = playersInGame.pop();
 

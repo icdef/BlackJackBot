@@ -13,7 +13,7 @@ public class Shut implements Runnable {
     private File fileRegisteredPlayers;
     private Map<String, Player> registeredPlayers;
 
-    public Shut(JDA jda, File fileRegisteredPlayers,Map<String,Player> registeredPlayers) {
+    public Shut(JDA jda, File fileRegisteredPlayers, Map<String, Player> registeredPlayers) {
         this.jda = jda;
         this.fileRegisteredPlayers = fileRegisteredPlayers;
         this.registeredPlayers = registeredPlayers;
@@ -39,7 +39,7 @@ public class Shut implements Runnable {
         }
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileRegisteredPlayers, false))) {
             for (Map.Entry<String, Player> entry : registeredPlayers.entrySet()) {
-                writer.write(entry.getKey()+";"+entry.getValue().getMoney()+"\n");
+                writer.write(entry.getKey() + ";" + entry.getValue().getMoney() + "\n");
             }
 
         } catch (IOException e) {
