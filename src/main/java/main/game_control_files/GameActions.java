@@ -35,9 +35,6 @@ public class GameActions {
         this.channel = channel;
     }
 
-    public Player getActivePlayer() {
-        return activePlayer;
-    }
 
     /**
      * checks if activePlayer is currently playing a split hand
@@ -58,7 +55,7 @@ public class GameActions {
     public boolean commandFromCorrectPlayer(Player player) {
         if (player == null)
             return false;
-        return player == getActivePlayer() || (player.getNameNoTag() + " split").equals(activePlayer.getNameNoTag());
+        return player == activePlayer || player.equals(activePlayer);
     }
 
     /**
@@ -84,7 +81,7 @@ public class GameActions {
 
 
     private String addActiveToNameWhenActivePlayer(Player player) {
-        return player.equals(activePlayer) ? player.getNameNoTag() + " active" : player.getNameNoTag();
+        return player == activePlayer ? player.getNameNoTag() + " active" : player.getNameNoTag();
     }
 
     /**
@@ -139,12 +136,13 @@ public class GameActions {
         }
 
         // for debugging
-       /* players.get(0).removeACardFromHand();
-        players.get(0).removeACardFromHand();
-        players.get(0).addCardToHand(new Card(10, "K"));
-        players.get(0).addCardToHand(new Card(10, "K"));
+        Player[] playerArray = players.toArray(new Player[0]);
+        playerArray[0].removeACardFromHand();
+        playerArray[0].removeACardFromHand();
+        playerArray[0].addCardToHand(new Card(10, "K"));
+        playerArray[0].addCardToHand(new Card(10, "K"));
         dealer.removeACardFromHand();
-        dealer.addCardToHand(new Card(10, "K"));*/
+        dealer.addCardToHand(new Card(10, "K"));
 
 
         playersInGame.push(dealer);
@@ -282,7 +280,7 @@ public class GameActions {
      */
     public void split() {
         activePlayer.reduceMoney(activePlayer.getBetAmount());
-        Player fakePlayer = new Player(activePlayer.getNameNoTag() + " split");
+        Player fakePlayer = new Player(activePlayer.getName());
         fakePlayer.addCardToHand(activePlayer.removeACardFromHand());
         activePlayer.addCardToHand(deck.pop());
         fakePlayer.addCardToHand(deck.pop());
