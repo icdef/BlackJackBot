@@ -136,13 +136,13 @@ public class GameActions {
         }
 
         // for debugging
-        Player[] playerArray = players.toArray(new Player[0]);
+       /* Player[] playerArray = players.toArray(new Player[0]);
         playerArray[0].removeACardFromHand();
         playerArray[0].removeACardFromHand();
         playerArray[0].addCardToHand(new Card(10, "K"));
         playerArray[0].addCardToHand(new Card(10, "K"));
         dealer.removeACardFromHand();
-        dealer.addCardToHand(new Card(10, "K"));
+        dealer.addCardToHand(new Card(10, "K"));*/
 
 
         playersInGame.push(dealer);
@@ -184,7 +184,7 @@ public class GameActions {
     public void dealerPlay(Message message) {
         while (activePlayer.getCurrentHandValue() < 17) {
             try {
-                Thread.sleep(1000);
+
                 activePlayer.addCardToHand(deck.pop());
                 if (activePlayer.getHandSize() == 2 && activePlayer.getCurrentHandValue() == 21) {
                     activePlayer.setBlackJack(true);
@@ -193,6 +193,7 @@ public class GameActions {
                     activePlayer.setBusted(true);
                 }
                 message.editMessage(currentRound()).complete();
+                Thread.sleep(1000);
             }
             catch (InterruptedException e ) {
                 System.out.println("Dealer got interrupted");
