@@ -55,7 +55,7 @@ public class GameActions {
     public boolean commandFromCorrectPlayer(Player player) {
         if (player == null)
             return false;
-        return player == activePlayer || player.equals(activePlayer);
+        return player.equals(activePlayer);
     }
 
     /**
