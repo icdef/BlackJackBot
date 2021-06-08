@@ -37,7 +37,7 @@ public class Help extends ListenerAdapter {
 
         String input = event.getMessage().getContentRaw();
         if (input.equals("help")) {
-            event.getChannel().sendMessage(commandsEmbed(event.getJDA())).queue();
+            event.getAuthor().openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage(commandsEmbed(event.getJDA())).queue());
         }
     }
 }
