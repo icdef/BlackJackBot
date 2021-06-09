@@ -22,6 +22,7 @@ public class GameActions {
     private TextChannel channel;
     private Deque<Card> deck;
     private Player activePlayer;
+    private boolean allHadBlackjack = false;
 
     public GameActions(JDA jda) {
         this.jda = jda;
@@ -119,6 +120,7 @@ public class GameActions {
         }
         dealer.resetPlayer();
         splitPlayers.clear();
+        allHadBlackjack = false;
     }
 
     /**
@@ -168,6 +170,7 @@ public class GameActions {
             } else
                 break;
         }
+        allHadBlackjack = true;
         Message message = printCurrentGameWithActivePlayer();
         if (activePlayer == dealer) {
             dealerPlay(message);
@@ -189,11 +192,14 @@ public class GameActions {
                 if (activePlayer.getHandSize() == 2 && activePlayer.getCurrentHandValue() == 21) {
                     activePlayer.setBlackJack(true);
                 }
+                // everyone already won
+                if (allHadBlackjack)
+                    return;
                 if (activePlayer.getCurrentHandValue() > 21) {
                     activePlayer.setBusted(true);
                 }
                 message.editMessage(currentRound()).complete();
-                Thread.sleep(1000);
+                Thread.sleep(500);
             }
             catch (InterruptedException e ) {
                 System.out.println("Dealer got interrupted");
@@ -298,14 +304,18 @@ public class GameActions {
         for (Map.Entry<Player, Player> entry : splitPlayers.entrySet()) {
             Player fakePlayer = entry.getValue();
             Player realPlayer = entry.getKey();
+
+            // blackjack
+            if (fakePlayer.isBlackJack() && !dealer.isBlackJack()) {
+                realPlayer.addMoney(realPlayer.getBetAmount() * 2.5 );
+                realPlayer.addWonAmount(realPlayer.getBetAmount() * 2.5);
+
+            }
             // won
-            if ((!fakePlayer.isBusted() && dealer.isBusted()) || (!fakePlayer.isBusted() && !dealer.isBusted() && fakePlayer.getCurrentHandValue() > dealer.getCurrentHandValue())) {
+            else if ((!fakePlayer.isBusted() && dealer.isBusted()) || (!fakePlayer.isBusted() && !dealer.isBusted() && fakePlayer.getCurrentHandValue() > dealer.getCurrentHandValue())) {
                 realPlayer.addMoney(realPlayer.getBetAmount() * 2);
                 realPlayer.addWonAmount(realPlayer.getBetAmount() * 2);
-                if (fakePlayer.isBlackJack()) {
-                    realPlayer.addMoney(realPlayer.getBetAmount() / 2);
-                    realPlayer.addWonAmount(realPlayer.getBetAmount() / 2);
-                }
+
             }
             // push
             else if (!fakePlayer.isBusted() && !dealer.isBusted() && fakePlayer.getCurrentHandValue() == dealer.getCurrentHandValue()) {
