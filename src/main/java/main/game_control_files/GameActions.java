@@ -329,14 +329,17 @@ public class GameActions {
 
         }
         for (Player p : players) {
+
+            //blackjack
+            if (p.isBlackJack() && !dealer.isBlackJack()) {
+                p.addWonAmount(p.getBetAmount() * 2.5);
+                p.addMoney(p.getBetAmount() * 2.5);
+            }
             // won
-            if ((!p.isBusted() && dealer.isBusted()) || (!p.isBusted() && !dealer.isBusted() && p.getCurrentHandValue() > dealer.getCurrentHandValue())) {
+            else if ((!p.isBusted() && dealer.isBusted()) || (!p.isBusted() && !dealer.isBusted() && p.getCurrentHandValue() > dealer.getCurrentHandValue())) {
                 p.addMoney(p.getBetAmount() * 2);
                 p.addWonAmount(p.getBetAmount() * 2);
-                if (p.isBlackJack()) {
-                    p.addWonAmount(p.getBetAmount() / 2);
-                    p.addMoney(p.getBetAmount() / 2);
-                }
+
             }
             // push
             else if (!p.isBusted() && !dealer.isBusted() && p.getCurrentHandValue() == dealer.getCurrentHandValue()) {
