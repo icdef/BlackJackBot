@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.TimeUnit;
+
 public class Help extends ListenerAdapter {
 
     private MessageEmbed commandsEmbed(JDA jda) {
@@ -37,7 +39,7 @@ public class Help extends ListenerAdapter {
 
         String input = event.getMessage().getContentRaw();
         if (input.equals("help")) {
-            event.getChannel().sendMessage(commandsEmbed(event.getJDA())).queue();
+            event.getChannel().sendMessage(commandsEmbed(event.getJDA())).queue(msg -> msg.delete().queueAfter(3, TimeUnit.SECONDS));
         }
     }
 }
