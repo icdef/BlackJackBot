@@ -4,6 +4,7 @@ import main.game_control_files.GameActions;
 import main.game_control_files.GameFlow;
 import main.game_control_files.PlayState;
 import main.registration.RegisterReaction;
+import main.util.Clear;
 import main.util.Help;
 import main.util.Player;
 import main.util.Shut;
@@ -85,7 +86,7 @@ public class Main {
         PlayState playState = PlayState.NOT_PLAYING;
         GameActions gameActions = new GameActions(jda);
         jda.addEventListener(new RegisterReaction(alreadyRegisteredPlayers, fileRegisteredPlayers),
-                new GameFlow(playState, playerSet, alreadyRegisteredPlayers, gameActions), new Help());
+                new GameFlow(playState, playerSet, alreadyRegisteredPlayers, gameActions), new Help(), new Clear(playState));
 
 
     }

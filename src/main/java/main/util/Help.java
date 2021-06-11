@@ -13,7 +13,7 @@ public class Help extends ListenerAdapter {
     private MessageEmbed commandsEmbed(JDA jda) {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setAuthor(jda.getUserByTag("BlackJackBot#1745").getName(), null, jda.getUserByTag("BlackJackBot#1745").getAvatarUrl());
-        builder.setTitle("Commands");
+        builder.setTitle("Commands for blackjack-table");
         builder.addField("blackjack", "starts the blackjack session", false);
         builder.addField("quit", "stops the blackjack session. Only possible when you joined the table", false);
         builder.addField("join", "join the table for one(?) blackjack round", false);
@@ -24,6 +24,7 @@ public class Help extends ListenerAdapter {
         builder.addField("stand", "you stand (blackjack term)", false);
         builder.addField("double", "you double (blackjack term)", false);
         builder.addField("split", "you split (blackjack term)", false);
+        builder.addField("clear", "clears last 100 messages from chat", false);
         return builder.build();
 
     }
