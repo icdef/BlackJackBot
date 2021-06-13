@@ -148,10 +148,9 @@ public class GameActions {
 
 
         playersInGame.push(dealer);
-        List<Player> playerSetAsList = new LinkedList<>(players);
-        Collections.reverse(playerSetAsList);
-        for (Player player : playerSetAsList) {
-            playersInGame.push(player);
+        Player[] playerArray = players.toArray(new Player[0]);
+        for (int i = playerArray.length-1; i >= 0 ; i--) {
+            playersInGame.push(playerArray[i]);
         }
         activePlayer = playersInGame.pop();
 
@@ -163,14 +162,18 @@ public class GameActions {
      * @return true when all player have blackjack, meaning its the turn of the dealer. Otherwise false
      */
     public boolean checkForBlackJacks() {
+        int nrOfBlackjacks = 0;
         while (activePlayer != dealer) {
             if (activePlayer.getHandSize() == 2 && activePlayer.getCurrentHandValue() == 21) {
                 activePlayer.setBlackJack(true);
                 activePlayer = playersInGame.pop();
+                nrOfBlackjacks++;
             } else
                 break;
         }
-        allHadBlackjack = true;
+        if (nrOfBlackjacks == players.size()) {
+            allHadBlackjack = true;
+        }
         Message message = printCurrentGameWithActivePlayer();
         if (activePlayer == dealer) {
             dealerPlay(message);
@@ -208,6 +211,17 @@ public class GameActions {
 
 
     }
+    public void nextPlayersTurn(){
+        activePlayer = playersInGame.pop();
+        if (activePlayer == dealer){
+            return;
+        }
+        if (activePlayer.getHandSize() == 2 && activePlayer.getCurrentHandValue() == 21){
+            activePlayer.setBlackJack(true);
+            nextPlayersTurn();
+        }
+
+    }
 
     /**
      * Player gets another card. Prints the current round state afterwards
@@ -218,6 +232,9 @@ public class GameActions {
         activePlayer.addCardToHand(deck.pop());
         if (activePlayer.getCurrentHandValue() > 21) {
             activePlayer.setBusted(true);
+            activePlayer = playersInGame.pop();
+        }
+        else if (activePlayer.getCurrentHandValue() == 21) {
             activePlayer = playersInGame.pop();
         }
         Message message = printCurrentGameWithActivePlayer();
