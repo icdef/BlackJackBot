@@ -138,13 +138,13 @@ public class GameActions {
         }
 
         // for debugging
-       /* Player[] playerTestArray = players.toArray(new Player[0]);
-        playerTestArray[1].removeACardFromHand();
-        playerTestArray[1].removeACardFromHand();
-        playerTestArray[1].addCardToHand(new Card(10, "K"));
-        playerTestArray[1].addCardToHand(new Card(11, "A"));
+        Player[] playerTestArray = players.toArray(new Player[0]);
+        playerTestArray[0].removeACardFromHand();
+        playerTestArray[0].removeACardFromHand();
+        playerTestArray[0].addCardToHand(new Card(10, "K"));
+        playerTestArray[0].addCardToHand(new Card(10, "K"));
         dealer.removeACardFromHand();
-        dealer.addCardToHand(new Card(10, "K"));*/
+        dealer.addCardToHand(new Card(10, "K"));
 
 
         playersInGame.push(dealer);
@@ -213,7 +213,7 @@ public class GameActions {
     }
 
     /**
-     * next players turn. when next player has black jack recursively goes to next player
+     * next players turn. when next player has black jack recursively goes to next player till its dealer's turn
      */
     public void nextPlayersTurn(){
         activePlayer = playersInGame.pop();
@@ -308,12 +308,16 @@ public class GameActions {
      */
     public void split() {
         activePlayer.reduceMoney(activePlayer.getBetAmount());
-        Player fakePlayer = new Player(activePlayer.getName());
+        Player fakePlayer = new Player(activePlayer.getUuid(),activePlayer.getName());
         fakePlayer.addCardToHand(activePlayer.removeACardFromHand());
         activePlayer.addCardToHand(deck.pop());
         fakePlayer.addCardToHand(deck.pop());
         splitPlayers.put(activePlayer, fakePlayer);
         playersInGame.push(fakePlayer);
+        if (activePlayer.getCurrentHandValue() == 21) {
+            activePlayer.setBlackJack(true);
+            nextPlayersTurn();
+        }
         printCurrentGameWithActivePlayer();
     }
 

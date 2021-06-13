@@ -53,7 +53,7 @@ public class GameFlow extends ListenerAdapter {
         String input = event.getMessage().getContentRaw();
         String[] inputSplitted = input.split(" ");
         TextChannel channel = event.getChannel();
-        Player player = registeredPlayer.get(event.getAuthor().getAsTag());
+        Player player = registeredPlayer.get(event.getAuthor().getId());
 
         if (playState == PlayState.NOT_PLAYING && input.equals("blackjack")) {
             playState = PlayState.CHOOSING_PLAYER;
@@ -167,9 +167,9 @@ public class GameFlow extends ListenerAdapter {
 
         gameActions.calculatePayout();
         for (Player p : playerSet) {
-            String fieldName = p.getNameNoTag() + (p.getWonAmount() > 0 ? " won " + nf.format(p.getWonAmount()) + "$" :
-                    p.getWonAmount() < 0 ? " lost " + nf.format(Math.abs(p.getWonAmount())) + "$" : " push");
-            builder.addField(fieldName, "Current balance: " + nf.format(p.getMoney()) + "$", false);
+            String fieldName = p.getNameNoTag() + (p.getWonAmount() > 0 ? " won $" + nf.format(p.getWonAmount()) :
+                    p.getWonAmount() < 0 ? " lost $" + nf.format(Math.abs(p.getWonAmount())) : " push");
+            builder.addField(fieldName, "Current balance: $" + nf.format(p.getMoney()), false);
         }
         builder.setFooter("Players can join and leave or start the next round");
         channel.sendMessage(builder.build()).queue();

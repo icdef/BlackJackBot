@@ -9,6 +9,7 @@ import java.util.Objects;
 public class Player {
 
     private final String name;
+    private String uuid = "";
     private final List<Card> currentHand = new ArrayList<>();
     private int amountOfAces = 0;
     private double money = 0;
@@ -17,7 +18,8 @@ public class Player {
     private boolean blackJack = false;
     private boolean busted = false;
 
-    public Player(String name, double money) {
+    public Player(String uuid, String name, double money) {
+        this.uuid = uuid;
         this.name = name;
         this.money = money;
     }
@@ -25,9 +27,17 @@ public class Player {
     public Player(String name) {
         this.name = name;
     }
+    public Player(String uuid, String name){
+        this.uuid = uuid;
+        this.name = name;
+    }
 
     public String getName() {
         return name;
+    }
+
+    public String getUuid() {
+        return uuid;
     }
 
     public double getWonAmount() {
@@ -145,12 +155,12 @@ public class Player {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Player player = (Player) o;
-        return name.equals(player.name);
+        return uuid.equals(player.uuid);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name);
+        return Objects.hash(uuid);
     }
 
     @Override

@@ -3,6 +3,7 @@ package main.registration;
 import main.Main;
 import main.util.Player;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -27,15 +28,15 @@ public class RegisterReaction extends ListenerAdapter {
     /**
      * Registers a player for the BlackJack game. Prints the feedback of the registration to the channel.
      *
-     * @param userName name of the new Player
+     * @param user the new Player
      * @param channel  text channel where the answer is written to
      */
-    private void registerPlayer(String userName, TextChannel channel) {
-        if (!registeredPlayers.containsKey(userName)) {
+    private void registerPlayer(User user, TextChannel channel) {
+        if (!registeredPlayers.containsKey(user.getId())) {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileRegisteredPlayers, true))) {
-                writer.write(userName + ";1000\n");
-                registeredPlayers.put(userName, new Player(userName, 1000));
-                channel.sendMessage(userName + " got registered! You start with 1000 coins").queue(msg -> msg.delete().queueAfter(2, TimeUnit.SECONDS));
+                writer.write(user + ";1000\n");
+                registeredPlayers.put(user.getId(), new Player(user.getId(),user.getAsTag(), 1000));
+                channel.sendMessage(user.getAsTag() + " got registered! You start with 1000 coins").queue(msg -> msg.delete().queueAfter(2, TimeUnit.SECONDS));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -52,7 +53,7 @@ public class RegisterReaction extends ListenerAdapter {
             return;
         if (event.getReaction().getReactionEmote().getAsCodepoints().equalsIgnoreCase("U+2705")) {
             // retrieving needed cause otherwise caching issues possible
-            event.retrieveUser().queue(user -> registerPlayer(user.getAsTag(), event.getTextChannel()));
+            event.retrieveUser().queue(user -> registerPlayer(user, event.getTextChannel()));
         }
 
 
@@ -66,7 +67,7 @@ public class RegisterReaction extends ListenerAdapter {
             return;
         if (event.getReaction().getReactionEmote().getAsCodepoints().equalsIgnoreCase("U+2705")) {
             // retrieving needed cause otherwise caching issues possible
-            event.retrieveUser().queue(user -> registerPlayer(user.getAsTag(), event.getTextChannel()));
+            event.retrieveUser().queue(user -> registerPlayer(user, event.getTextChannel()));
 
         }
 
