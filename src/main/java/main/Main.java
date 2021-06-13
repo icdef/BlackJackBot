@@ -25,7 +25,7 @@ import java.util.*;
 public class Main {
     public static final String REGISTER_CHANNEL_ID = "851209582205468693";
     public static final String PLAY_CHANNEL_ID = "851209654146957312";
-    public static final String FILE_REGISTERED_PLAYERS_PATH = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + File.separator + "java" + File.separator + "main" + File.separator + "AllPlayers.csv";
+    public static final String FILE_REGISTERED_PLAYERS_PATH = System.getProperty("user.dir") + File.separator + "AllPlayers.csv";
     private static final Map<String, Player> registeredPlayers = new HashMap<>();
 
     private static void createEmbed(JDA jda, TextChannel channel) {
@@ -41,7 +41,6 @@ public class Main {
      */
     private static void createEmbedIfNeeded(JDA jda) {
         TextChannel channel = jda.getTextChannelById(REGISTER_CHANNEL_ID);
-        assert channel != null;
         MessageHistory history = new MessageHistory(channel);
         history.retrievePast(1).queue(msgList -> {
             if (msgList.isEmpty()) {
@@ -53,17 +52,17 @@ public class Main {
     /**
      * reads the input file and returns a map with key: userName and value: Player instance with balance and name from file
      *
-     * @param fileRegisteredPlayers file with registered people in from of playername;balance
+     * @param fileRegisteredPlayers file with registered people in from of playeruuid;balance
      * @return Map with Key=UserName Value=Player instance with name and balance from file
      */
-    private static Map<String, Player> readAlreadyRegisteredPlayers(File fileRegisteredPlayers) {
+    private static Map<String, Player>readAlreadyRegisteredPlayers(File fileRegisteredPlayers, JDA jda) {
 
         // will need to refactor when moving file
         try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(fileRegisteredPlayers)))) {
             while (scanner.hasNext()) {
                 String line = scanner.nextLine();
                 String[] lineSplitted = line.split(";");
-                registeredPlayers.put(lineSplitted[0], new Player(lineSplitted[0], Double.parseDouble(lineSplitted[1])));
+                registeredPlayers.put(lineSplitted[0], new Player(lineSplitted[0],jda.retrieveUserById(lineSplitted[0]).complete().getAsTag(), Double.parseDouble(lineSplitted[1])));
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -81,7 +80,7 @@ public class Main {
         Thread t1 = new Thread(new Shut(jda, fileRegisteredPlayers, registeredPlayers));
         t1.start();
         createEmbedIfNeeded(jda);
-        Map<String, Player> alreadyRegisteredPlayers = readAlreadyRegisteredPlayers(fileRegisteredPlayers);
+        Map<String, Player> alreadyRegisteredPlayers = readAlreadyRegisteredPlayers(fileRegisteredPlayers,jda);
         Set<Player> playerSet = new HashSet<>();
         PlayState playState = PlayState.NOT_PLAYING;
         GameActions gameActions = new GameActions(jda);
