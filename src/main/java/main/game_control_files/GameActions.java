@@ -138,11 +138,11 @@ public class GameActions {
         }
 
         // for debugging
-       /* Player[] playerArray = players.toArray(new Player[0]);
-        playerArray[0].removeACardFromHand();
-        playerArray[0].removeACardFromHand();
-        playerArray[0].addCardToHand(new Card(10, "K"));
-        playerArray[0].addCardToHand(new Card(10, "K"));
+       /* Player[] playerTestArray = players.toArray(new Player[0]);
+        playerTestArray[1].removeACardFromHand();
+        playerTestArray[1].removeACardFromHand();
+        playerTestArray[1].addCardToHand(new Card(10, "K"));
+        playerTestArray[1].addCardToHand(new Card(11, "A"));
         dealer.removeACardFromHand();
         dealer.addCardToHand(new Card(10, "K"));*/
 
@@ -211,6 +211,10 @@ public class GameActions {
 
 
     }
+
+    /**
+     * next players turn. when next player has black jack recursively goes to next player
+     */
     public void nextPlayersTurn(){
         activePlayer = playersInGame.pop();
         if (activePlayer == dealer){
@@ -232,7 +236,7 @@ public class GameActions {
         activePlayer.addCardToHand(deck.pop());
         if (activePlayer.getCurrentHandValue() > 21) {
             activePlayer.setBusted(true);
-            activePlayer = playersInGame.pop();
+            nextPlayersTurn();
         }
         else if (activePlayer.getCurrentHandValue() == 21) {
             activePlayer = playersInGame.pop();
@@ -251,7 +255,7 @@ public class GameActions {
      * @return true when all players played. Otherwise false
      */
     public boolean stand() {
-        activePlayer = playersInGame.pop();
+        nextPlayersTurn();
         Message message = printCurrentGameWithActivePlayer();
         if (activePlayer == dealer) {
             dealerPlay(message);
@@ -281,7 +285,7 @@ public class GameActions {
         if (activePlayer.getCurrentHandValue() > 21) {
             activePlayer.setBusted(true);
         }
-        activePlayer = playersInGame.pop();
+        nextPlayersTurn();
         Message message = printCurrentGameWithActivePlayer();
         if (activePlayer == dealer) {
             dealerPlay(message);
