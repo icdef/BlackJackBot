@@ -138,13 +138,13 @@ public class GameActions {
         }
 
         // for debugging
-        Player[] playerTestArray = players.toArray(new Player[0]);
+       /* Player[] playerTestArray = players.toArray(new Player[0]);
         playerTestArray[0].removeACardFromHand();
         playerTestArray[0].removeACardFromHand();
         playerTestArray[0].addCardToHand(new Card(10, "K"));
         playerTestArray[0].addCardToHand(new Card(10, "K"));
         dealer.removeACardFromHand();
-        dealer.addCardToHand(new Card(10, "K"));
+        dealer.addCardToHand(new Card(10, "K"));*/
 
 
         playersInGame.push(dealer);
