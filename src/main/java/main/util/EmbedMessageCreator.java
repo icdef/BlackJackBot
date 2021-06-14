@@ -25,7 +25,7 @@ public class EmbedMessageCreator {
     /**
      * when register embed got deleted, create new one. Only works when there are no messages in the channel
      */
-    public void createEmbedIfNeeded() {
+    public void createRegisterEmbedIfNeeded() {
         TextChannel channel = jda.getTextChannelById(Main.REGISTER_CHANNEL_ID);
         if (channel == null) {
             System.out.println("Channel not found!");
