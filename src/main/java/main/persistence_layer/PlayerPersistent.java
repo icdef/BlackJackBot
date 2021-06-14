@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 
 import java.io.*;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -13,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 public class PlayerPersistent implements IPlayerPersistent{
 
-    private final String fileRegisteredPlayersPath = System.getProperty("user.dir") + File.separator + "AllPlayers.csv";
+    private final String fileRegisteredPlayersPath = Paths.get(System.getProperty("user.dir"),"AllPlayers.csv").toString();
     private final Map<String, Player> registeredPlayers = new HashMap<>();
     private final File fileRegisteredPlayers = new File(fileRegisteredPlayersPath);
     private final JDA jda;

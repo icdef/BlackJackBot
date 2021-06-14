@@ -1,4 +1,4 @@
-package main.blackjack_commands;
+package main.blackjack_state_handlers;
 
 import main.game_control_files.GameActions;
 import main.game_control_files.GameFlow;

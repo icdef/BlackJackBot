@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
-public class Help extends ListenerAdapter {
+public class HelpCommandListener extends ListenerAdapter {
 
     private MessageEmbed commandsEmbed(JDA jda) {
         EmbedBuilder builder = new EmbedBuilder();

@@ -1,10 +1,9 @@
 package main.game_control_files;
 
 import main.*;
-import main.blackjack_commands.*;
+import main.blackjack_state_handlers.*;
 import main.Player;
 import main.persistence_layer.IPlayerPersistent;
-import main.persistence_layer.PlayerPersistent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;

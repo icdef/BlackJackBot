@@ -8,11 +8,11 @@ import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
-public class RegisterReaction extends ListenerAdapter {
+public class RegisterReactionListener extends ListenerAdapter {
 
    private IPlayerPersistent playerPersistent;
 
-    public RegisterReaction(IPlayerPersistent playerPersistent) {
+    public RegisterReactionListener(IPlayerPersistent playerPersistent) {
         this.playerPersistent = playerPersistent;
     }
 

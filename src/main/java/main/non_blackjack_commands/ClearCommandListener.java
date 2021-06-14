@@ -10,10 +10,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.TimeUnit;
 
-public class Clear extends ListenerAdapter {
+public class ClearCommandListener extends ListenerAdapter {
     private PlayState playState;
 
-    public Clear(PlayState playState) {
+    public ClearCommandListener(PlayState playState) {
         this.playState = playState;
     }
 
