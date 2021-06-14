@@ -15,8 +15,9 @@ public class Help extends ListenerAdapter {
         builder.setAuthor(jda.getUserByTag("BlackJackBot#1745").getName(), null, jda.getUserByTag("BlackJackBot#1745").getAvatarUrl());
         builder.setTitle("Commands for blackjack-table");
         builder.addField("blackjack", "starts the blackjack session", false);
-        builder.addField("join", "join the table for one(?) blackjack round", false);
-        builder.addField("leave", "leaves the table", false);
+        builder.addField("stop", "stops the blackjack session and bot goes to standby. (only possible when people are able to join and leave)", false);
+        builder.addField("join", "join the table for one or more blackjack round(s)", false);
+        builder.addField("leave", "leaving the table", false);
         builder.addField("start", "when all players joined, \"start\" starts the round", false);
         builder.addField("bet <amount>", "sets your bet", false);
         builder.addField("hit", "you hit (blackjack term)", false);

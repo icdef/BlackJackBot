@@ -15,15 +15,12 @@ import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import javax.security.auth.login.LoginException;
-import java.io.*;
 import java.util.*;
 
 
 public class Main {
     public static final String REGISTER_CHANNEL_ID = "851209582205468693";
     public static final String PLAY_CHANNEL_ID = "851209654146957312";
-    private static final String FILE_REGISTERED_PLAYERS_PATH = System.getProperty("user.dir") + File.separator + "AllPlayers.csv";
-    private static final Map<String, Player> registeredPlayers = new HashMap<>();
 
     private static void createEmbed(JDA jda, TextChannel channel) {
         EmbedBuilder builder = new EmbedBuilder();
@@ -50,51 +47,23 @@ public class Main {
         });
     }
 
-    /**
-     * reads the input file and returns a map with key: userName and value: Player instance with balance and name from file
-     *
-     * @param fileRegisteredPlayers file with registered people in from of playeruuid;balance
-     * @return Map with Key=UserName Value=Player instance with name and balance from file
-     */
-    private static Map<String, Player>readAlreadyRegisteredPlayers(File fileRegisteredPlayers, JDA jda) {
 
-        // will need to refactor when moving file
-        try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(fileRegisteredPlayers)))) {
-            while (scanner.hasNext()) {
-                String line = scanner.nextLine();
-                String[] lineSplitted = line.split(";");
-                registeredPlayers.put(lineSplitted[0], new Player(lineSplitted[0],jda.retrieveUserById(lineSplitted[0]).complete().getAsTag(), Double.parseDouble(lineSplitted[1])));
-            }
-        } catch (FileNotFoundException e) {
-            try {
-                boolean created = new File(FILE_REGISTERED_PLAYERS_PATH).createNewFile();
-                if (!created) {
-                    System.out.println("Could not create File");
-                }
-            }
-            catch (IOException ex){
-                ex.printStackTrace();
-            }
-        }
-        return registeredPlayers;
-    }
 
     public static void main(String[] args) throws LoginException, InterruptedException {
 
-        File fileRegisteredPlayers = new File(FILE_REGISTERED_PLAYERS_PATH);
         JDABuilder jdaBuilder = JDABuilder.createDefault("");
         JDA jda = jdaBuilder.build();
         jda.awaitReady();
         System.out.println("Bot is on");
-        Thread t1 = new Thread(new Shut(jda, fileRegisteredPlayers, registeredPlayers));
+        PlayerPersistent playerPersistent = new PlayerPersistent(jda);
+        Thread t1 = new Thread(new Shut(jda, playerPersistent));
         t1.start();
         createEmbedIfNeeded(jda);
-        Map<String, Player> alreadyRegisteredPlayers = readAlreadyRegisteredPlayers(fileRegisteredPlayers,jda);
         Set<Player> playerSet = new HashSet<>();
         PlayState playState = PlayState.NOT_PLAYING;
         GameActions gameActions = new GameActions(jda);
-        jda.addEventListener(new RegisterReaction(alreadyRegisteredPlayers, fileRegisteredPlayers),
-                new GameFlow(playState, playerSet, alreadyRegisteredPlayers, gameActions, jda), new Help(), new Clear(playState));
+        jda.addEventListener(new RegisterReaction(playerPersistent),
+                new GameFlow(playState, playerSet, playerPersistent, gameActions, jda), new Help(), new Clear(playState));
 
 
     }

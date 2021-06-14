@@ -4,6 +4,7 @@ import main.game_control_files.PlayState;
 import main.util.Player;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import java.util.Map;
 import java.util.Set;
 
 public class ChoosingPlayer implements IGameAction{
@@ -11,12 +12,12 @@ public class ChoosingPlayer implements IGameAction{
     private Set<Player> playerSet;
 
     public ChoosingPlayer(Set<Player> playerSet) {
-
         this.playerSet = playerSet;
     }
 
     @Override
     public PlayState handleInput(String input, Player player, TextChannel channel) {
+
             if (input.equals("join")) {
                 if (player == null) {
                     channel.sendMessage("Please register yourself first").queue();
@@ -27,6 +28,7 @@ public class ChoosingPlayer implements IGameAction{
                     channel.sendMessage("You joined the table").queue();
                 }
             }
+
             if (input.equals("leave")){
                 if (playerSet.remove(player)) {
                     channel.sendMessage("You left the table").queue();
@@ -34,6 +36,7 @@ public class ChoosingPlayer implements IGameAction{
                     channel.sendMessage("You were not on the table").queue();
                 }
             }
+
             // initiates the bet state when at least one player joined the table
             if (input.equals("start")){
                 if (playerSet.isEmpty()) {
@@ -46,6 +49,13 @@ public class ChoosingPlayer implements IGameAction{
                     return PlayState.BETTING;
                 }
             }
+
+            if (input.equals("quit")) {
+                playerSet.clear();
+                channel.sendMessage("BlackJack is over! Bot is in standby").queue();
+                return PlayState.NOT_PLAYING;
+            }
+
             return PlayState.CHOOSING_PLAYER;
     }
 }

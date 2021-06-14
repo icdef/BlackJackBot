@@ -19,16 +19,16 @@ public class GameFlow extends ListenerAdapter {
 
     private PlayState playState;
     private final Set<Player> playerSet;
-    private final Map<String, Player> registeredPlayer;
+    private PlayerPersistent playerPersistent;
     private final NumberFormat nf = new DecimalFormat("##.###");
     private final GameActions gameActions;
     private final JDA jda;
     private final EnumMap<PlayState, IGameAction> playStateIGameActionMap = new EnumMap<>(PlayState.class);
 
-    public GameFlow(PlayState playState, Set<Player> playerSet, Map<String, Player> registeredPlayer, GameActions gameActions, JDA jda) {
+    public GameFlow(PlayState playState, Set<Player> playerSet, PlayerPersistent playerPersistent, GameActions gameActions, JDA jda) {
         this.playState = playState;
         this.playerSet = playerSet;
-        this.registeredPlayer = registeredPlayer;
+        this.playerPersistent = playerPersistent;
         this.gameActions = gameActions;
         this.jda = jda;
         initializingMap();
@@ -39,7 +39,6 @@ public class GameFlow extends ListenerAdapter {
         IGameAction choosingPlayer = new ChoosingPlayer(playerSet);
         IGameAction betting = new Betting(playerSet,gameActions,this);
         IGameAction playing = new Playing(gameActions,this);
-
         playStateIGameActionMap.put(PlayState.NOT_PLAYING,notPlaying);
         playStateIGameActionMap.put(PlayState.CHOOSING_PLAYER,choosingPlayer);
         playStateIGameActionMap.put(PlayState.BETTING,betting);
@@ -55,9 +54,10 @@ public class GameFlow extends ListenerAdapter {
             return;
         if (!event.getChannel().getId().equals(Main.PLAY_CHANNEL_ID))
             return;
+        Map<String, Player> registeredPlayers = playerPersistent.readAlreadyRegisteredPlayers();
         String input = event.getMessage().getContentRaw();
         TextChannel channel = event.getChannel();
-        Player player = registeredPlayer.get(event.getAuthor().getId());
+        Player player = registeredPlayers.get(event.getAuthor().getId());
         playState = playStateIGameActionMap.get(playState).handleInput(input,player,channel);
 
 
