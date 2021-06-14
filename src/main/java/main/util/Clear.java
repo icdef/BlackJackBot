@@ -24,12 +24,14 @@ public class Clear extends ListenerAdapter {
         if (!event.getChannel().getId().equals(Main.PLAY_CHANNEL_ID))
             return;
         String input = event.getMessage().getContentRaw();
-        if (input.equals("clear") && playState == PlayState.NOT_PLAYING) {
+        if (input.equals("clear") && (playState == PlayState.NOT_PLAYING || playState == PlayState.CHOOSING_PLAYER)) {
             TextChannel channel = event.getChannel();
             channel.sendMessage("Bot is working, please wait...").complete();
-            MessageHistory history = MessageHistory.getHistoryFromBeginning(channel).limit(100).complete();
-            channel.deleteMessages(history.getRetrievedHistory()).queue(success -> channel.sendMessage("Messages deleted")
-                    .queue(msg -> msg.delete().queueAfter(500, TimeUnit.MILLISECONDS)));
+            MessageHistory history = channel.getHistory();
+            history.retrievePast(100).complete();
+            channel.deleteMessages(history.getRetrievedHistory()).complete();
+            channel.sendMessage("Messages deleted").queueAfter(1,TimeUnit.SECONDS, m -> m.delete().queueAfter(500, TimeUnit.MILLISECONDS));
+
 
         }
     }

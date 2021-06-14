@@ -15,17 +15,14 @@ import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import javax.security.auth.login.LoginException;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
 import java.util.*;
 
 
 public class Main {
     public static final String REGISTER_CHANNEL_ID = "851209582205468693";
     public static final String PLAY_CHANNEL_ID = "851209654146957312";
-    public static final String FILE_REGISTERED_PLAYERS_PATH = System.getProperty("user.dir") + File.separator + "AllPlayers.csv";
+    private static final String FILE_REGISTERED_PLAYERS_PATH = System.getProperty("user.dir") + File.separator + "AllPlayers.csv";
     private static final Map<String, Player> registeredPlayers = new HashMap<>();
 
     private static void createEmbed(JDA jda, TextChannel channel) {
@@ -41,6 +38,10 @@ public class Main {
      */
     private static void createEmbedIfNeeded(JDA jda) {
         TextChannel channel = jda.getTextChannelById(REGISTER_CHANNEL_ID);
+        if (channel == null) {
+            System.out.println("Channel not found!");
+            return;
+        }
         MessageHistory history = new MessageHistory(channel);
         history.retrievePast(1).queue(msgList -> {
             if (msgList.isEmpty()) {
@@ -65,7 +66,15 @@ public class Main {
                 registeredPlayers.put(lineSplitted[0], new Player(lineSplitted[0],jda.retrieveUserById(lineSplitted[0]).complete().getAsTag(), Double.parseDouble(lineSplitted[1])));
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            try {
+                boolean created = new File(FILE_REGISTERED_PLAYERS_PATH).createNewFile();
+                if (!created) {
+                    System.out.println("Could not create File");
+                }
+            }
+            catch (IOException ex){
+                ex.printStackTrace();
+            }
         }
         return registeredPlayers;
     }
@@ -85,7 +94,7 @@ public class Main {
         PlayState playState = PlayState.NOT_PLAYING;
         GameActions gameActions = new GameActions(jda);
         jda.addEventListener(new RegisterReaction(alreadyRegisteredPlayers, fileRegisteredPlayers),
-                new GameFlow(playState, playerSet, alreadyRegisteredPlayers, gameActions), new Help(), new Clear(playState));
+                new GameFlow(playState, playerSet, alreadyRegisteredPlayers, gameActions, jda), new Help(), new Clear(playState));
 
 
     }

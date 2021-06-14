@@ -160,7 +160,7 @@ public class GameActions {
      *
      * @return true when all player have blackjack, meaning its the turn of the dealer. Otherwise false
      */
-    public boolean checkForBlackJacks() {
+    public boolean doAllPlayersHaveBlackJack() {
         int nrOfBlackjacks = 0;
         while (activePlayer != dealer) {
             if (activePlayer.getHandSize() == 2 && activePlayer.getCurrentHandValue() == 21) {
