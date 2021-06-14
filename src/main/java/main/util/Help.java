@@ -14,7 +14,7 @@ public class Help extends ListenerAdapter {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setAuthor(jda.getUserByTag("BlackJackBot#1745").getName(), null, jda.getUserByTag("BlackJackBot#1745").getAvatarUrl());
         builder.setTitle("Commands for blackjack-table");
-        builder.addField("blackjack", "starts the blackjack session", false);re
+        builder.addField("blackjack", "starts the blackjack session", false);
         builder.addField("join", "join the table for one(?) blackjack round", false);
         builder.addField("leave", "leaves the table", false);
         builder.addField("start", "when all players joined, \"start\" starts the round", false);
