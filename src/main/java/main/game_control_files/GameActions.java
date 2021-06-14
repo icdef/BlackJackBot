@@ -40,10 +40,9 @@ public class GameActions {
     /**
      * checks if activePlayer is currently playing a split hand
      *
-     * @param activePlayer
      * @return true when active is playing a split hand. Otherwise false
      */
-    private boolean playerCurrentlySplitting(Player activePlayer) {
+    private boolean playerCurrentlySplitting() {
         return splitPlayers.containsValue(activePlayer) || splitPlayers.containsKey(activePlayer);
     }
 
@@ -270,7 +269,7 @@ public class GameActions {
      * @return true if allowed. Otherwise false
      */
     public boolean allowedToDouble() {
-        return activePlayer.getHandSize() == 2 && !playerCurrentlySplitting(activePlayer);
+        return activePlayer.getHandSize() == 2 && !playerCurrentlySplitting();
     }
 
     /**
@@ -300,7 +299,7 @@ public class GameActions {
      * @return true when the play can split. Otherwise false
      */
     public boolean allowedToSplit() {
-        return activePlayer.isHandSplittable() && !playerCurrentlySplitting(activePlayer);
+        return activePlayer.isHandSplittable() && !playerCurrentlySplitting();
     }
 
     /**
