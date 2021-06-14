@@ -1,10 +1,10 @@
-package main;
+package main.blackjack_commands;
 
 import main.game_control_files.PlayState;
-import main.util.Player;
+import main.Player;
 import net.dv8tion.jda.api.entities.TextChannel;
 
-public class NotPlaying implements IGameAction{
+public class NotPlaying implements IGameAction {
 
 
 

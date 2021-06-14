@@ -1,6 +1,6 @@
-package main;
+package main.persistence_layer;
 
-import main.util.Player;
+import main.Player;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
-public class PlayerPersistent {
+public class PlayerPersistent implements IPlayerPersistent{
 
     private final String fileRegisteredPlayersPath = System.getProperty("user.dir") + File.separator + "AllPlayers.csv";
     private final Map<String, Player> registeredPlayers = new HashMap<>();
@@ -22,13 +22,7 @@ public class PlayerPersistent {
         this.jda = jda;
     }
 
-
-    /**
-     * reads the input file and returns a map with key: userName and value: Player instance with balance and name from file
-     *
-     * @return Map with Key=UserName Value=Player instance with name and balance from file
-     */
-    public Map<String, Player>readAlreadyRegisteredPlayers() {
+    public Map<String, Player> readAlreadyRegisteredPlayers() {
 
         // will need to refactor when moving file
         try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(fileRegisteredPlayers)))) {
@@ -50,12 +44,7 @@ public class PlayerPersistent {
         }
         return registeredPlayers;
     }
-    /**
-     * Registers a player for the BlackJack game. Prints the feedback of the registration to the channel.
-     *
-     * @param user the new Player
-     * @param channel  text channel where the answer is written to
-     */
+
     public void registerPlayer(User user, TextChannel channel) {
         if (!registeredPlayers.containsKey(user.getId())) {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileRegisteredPlayers, true))) {

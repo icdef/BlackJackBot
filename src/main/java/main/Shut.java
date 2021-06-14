@@ -1,6 +1,7 @@
-package main.util;
+package main;
 
-import main.PlayerPersistent;
+import main.persistence_layer.IPlayerPersistent;
+import main.persistence_layer.PlayerPersistent;
 import net.dv8tion.jda.api.JDA;
 
 import java.io.*;
@@ -10,9 +11,9 @@ import java.io.*;
  */
 public class Shut implements Runnable {
     private JDA jda;
-    private PlayerPersistent playerPersistent;
+    private IPlayerPersistent playerPersistent;
 
-    public Shut(JDA jda, PlayerPersistent playerPersistent) {
+    public Shut(JDA jda, IPlayerPersistent playerPersistent) {
         this.jda = jda;
         this.playerPersistent = playerPersistent;
     }

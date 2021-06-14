@@ -1,13 +1,12 @@
-package main;
+package main.blackjack_commands;
 
 import main.game_control_files.PlayState;
-import main.util.Player;
+import main.Player;
 import net.dv8tion.jda.api.entities.TextChannel;
 
-import java.util.Map;
 import java.util.Set;
 
-public class ChoosingPlayer implements IGameAction{
+public class ChoosingPlayer implements IGameAction {
 
     private Set<Player> playerSet;
 

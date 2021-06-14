@@ -1,4 +1,4 @@
-package main.util;
+package main;
 
 import main.playing_cards.Card;
 

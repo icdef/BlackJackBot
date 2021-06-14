@@ -2,7 +2,7 @@ package main.game_control_files;
 
 import main.playing_cards.Card;
 import main.playing_cards.DeckUtility;
-import main.util.Player;
+import main.Player;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;
@@ -11,7 +11,6 @@ import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 public class GameActions {
     private final Player dealer = new Player("Dealer");

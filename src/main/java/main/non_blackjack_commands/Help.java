@@ -1,4 +1,4 @@
-package main.util;
+package main.non_blackjack_commands;
 
 import main.Main;
 import net.dv8tion.jda.api.EmbedBuilder;

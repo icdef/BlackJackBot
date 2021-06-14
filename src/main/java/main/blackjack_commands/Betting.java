@@ -1,11 +1,10 @@
-package main;
+package main.blackjack_commands;
 
 import main.game_control_files.GameActions;
 import main.game_control_files.GameFlow;
 import main.game_control_files.PlayState;
-import main.util.Player;
+import main.Player;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;

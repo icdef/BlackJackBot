@@ -1,7 +1,10 @@
 package main.game_control_files;
 
 import main.*;
-import main.util.Player;
+import main.blackjack_commands.*;
+import main.Player;
+import main.persistence_layer.IPlayerPersistent;
+import main.persistence_layer.PlayerPersistent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -17,20 +20,22 @@ import java.util.Set;
 
 public class GameFlow extends ListenerAdapter {
 
-    private PlayState playState;
     private final Set<Player> playerSet;
-    private PlayerPersistent playerPersistent;
+    private final IPlayerPersistent playerPersistent;
     private final NumberFormat nf = new DecimalFormat("##.###");
     private final GameActions gameActions;
     private final JDA jda;
     private final EnumMap<PlayState, IGameAction> playStateIGameActionMap = new EnumMap<>(PlayState.class);
+    private final Map<String, Player> registeredPlayers;
+    private PlayState playState;
 
-    public GameFlow(PlayState playState, Set<Player> playerSet, PlayerPersistent playerPersistent, GameActions gameActions, JDA jda) {
+    public GameFlow(PlayState playState, Set<Player> playerSet, IPlayerPersistent playerPersistent, GameActions gameActions, JDA jda) {
         this.playState = playState;
         this.playerSet = playerSet;
         this.playerPersistent = playerPersistent;
         this.gameActions = gameActions;
         this.jda = jda;
+        this.registeredPlayers = playerPersistent.readAlreadyRegisteredPlayers();
         initializingMap();
     }
 
@@ -54,7 +59,6 @@ public class GameFlow extends ListenerAdapter {
             return;
         if (!event.getChannel().getId().equals(Main.PLAY_CHANNEL_ID))
             return;
-        Map<String, Player> registeredPlayers = playerPersistent.readAlreadyRegisteredPlayers();
         String input = event.getMessage().getContentRaw();
         TextChannel channel = event.getChannel();
         Player player = registeredPlayers.get(event.getAuthor().getId());

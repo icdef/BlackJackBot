@@ -1,4 +1,4 @@
-package main.util;
+package main.non_blackjack_commands;
 
 import main.Main;
 import main.game_control_files.PlayState;

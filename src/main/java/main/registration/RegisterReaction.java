@@ -1,6 +1,7 @@
 package main.registration;
 
-import main.PlayerPersistent;
+import main.persistence_layer.IPlayerPersistent;
+import main.persistence_layer.PlayerPersistent;
 import main.Main;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
@@ -9,9 +10,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class RegisterReaction extends ListenerAdapter {
 
-   private PlayerPersistent playerPersistent;
+   private IPlayerPersistent playerPersistent;
 
-    public RegisterReaction(PlayerPersistent playerPersistent) {
+    public RegisterReaction(IPlayerPersistent playerPersistent) {
         this.playerPersistent = playerPersistent;
     }
 
