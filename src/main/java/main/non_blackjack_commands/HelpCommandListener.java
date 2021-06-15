@@ -24,7 +24,7 @@ public class HelpCommandListener extends ListenerAdapter {
         builder.addField("stand", "you stand (blackjack term)", false);
         builder.addField("double", "you double (blackjack term)", false);
         builder.addField("split", "you split (blackjack term)", false);
-        builder.addField("clear", "clears last 100 messages from chat", false);
+        builder.addField("clear", "clears all messages from chat", false);
         return builder.build();
 
     }

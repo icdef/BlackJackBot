@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.TimeUnit;
 
 public class ClearCommandListener extends ListenerAdapter {
-    private PlayState playState;
+    private final PlayState playState;
 
     public ClearCommandListener(PlayState playState) {
         this.playState = playState;
@@ -27,9 +27,17 @@ public class ClearCommandListener extends ListenerAdapter {
         if (input.equals("clear") && (playState == PlayState.NOT_PLAYING || playState == PlayState.CHOOSING_PLAYER)) {
             TextChannel channel = event.getChannel();
             channel.sendMessage("Bot is working, please wait...").complete();
-            MessageHistory history = channel.getHistory();
+            MessageHistory history = new MessageHistory(channel);
             history.retrievePast(100).complete();
-            channel.deleteMessages(history.getRetrievedHistory()).complete();
+            while(!history.getRetrievedHistory().isEmpty()) {
+                channel.deleteMessages(history.getRetrievedHistory()).complete();
+                history = new MessageHistory(channel);
+                history.retrievePast(100).complete();
+            }
+
+
+
+
             channel.sendMessage("Messages deleted").queueAfter(1,TimeUnit.SECONDS, m -> m.delete().queueAfter(500, TimeUnit.MILLISECONDS));
 
 
