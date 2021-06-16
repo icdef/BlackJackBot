@@ -3,6 +3,8 @@ package main.blackjack_state_handlers;
 import main.Player;
 import main.game_control_files.PlayState;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.Button;
 
 import java.util.Set;
 
@@ -21,10 +23,16 @@ public class ChoosingPlayer implements IGameAction {
             if (player == null) {
                 channel.sendMessage("Please register yourself first").queue();
             } else if (playerSet.contains(player)) {
-                channel.sendMessage("You already joined the table").queue();
+                channel.sendMessage("You already joined the table").
+                        setActionRows(ActionRow.of(Button.primary("join","Click to join the game"),
+                                Button.primary("start","Click to start the round")))
+                        .queue();
             } else {
                 playerSet.add(player);
-                channel.sendMessage("You joined the table").queue();
+                channel.sendMessage("You joined the table").
+                        setActionRows(ActionRow.of(Button.primary("join","Click to join the game"),
+                                Button.primary("start","Click to start the round")))
+                        .queue();
             }
         }
 

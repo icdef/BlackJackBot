@@ -5,5 +5,6 @@ public enum PlayState {
     NOT_PLAYING,
     CHOOSING_PLAYER,
     BETTING,
-    ROUND_OVER
+    ROUND_OVER,
+    STARTING
 }

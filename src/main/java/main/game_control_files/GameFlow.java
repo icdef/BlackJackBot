@@ -7,14 +7,19 @@ import main.persistence_layer.IPlayerPersistent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.Button;
+import net.dv8tion.jda.api.requests.restaction.interactions.UpdateInteractionAction;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class GameFlow extends ListenerAdapter {
@@ -70,6 +75,23 @@ public class GameFlow extends ListenerAdapter {
 
     }
 
+    @Override
+    public void onButtonClick(@NotNull ButtonClickEvent event) {
+        String input = event.getInteraction().getButton().getId();
+        TextChannel channel = event.getTextChannel();
+        Player player = registeredPlayers.get(event.getUser().getId());
+        if (input.equals("join")){
+            event.getInteraction().editMessage("You joined the table")
+                    .setActionRow(Button.primary("start","start the game")).queue();
+            playState = PlayState.CHOOSING_PLAYER;
+        }
+        if (input.equals("start")){
+            event.getInteraction().getTextChannel().deleteMessageById(event.getMessage().getId()).queue();
+            event.getTextChannel().sendMessage("Enter bet").queue();
+        }
+
+    }
+
     /**
      * gets called when the round is over. Prints the Win/Losses of all players in an embed. Afterwards resets the players.
      *
@@ -90,7 +112,7 @@ public class GameFlow extends ListenerAdapter {
             builder.addField(fieldName, "Current balance: $" + nf.format(p.getMoney()), false);
         }
         builder.setFooter("Players can join and leave or start the next round");
-        channel.sendMessage(builder.build()).queue();
+        channel.sendMessageEmbeds(builder.build()).queue();
         gameActions.resetPlayers();
         return PlayState.CHOOSING_PLAYER;
     }

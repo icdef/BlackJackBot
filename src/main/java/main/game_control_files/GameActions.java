@@ -117,7 +117,7 @@ public class GameActions {
                         splitPlayer.getCurrentHand().toString(), false);
             }
         }
-        return channel.sendMessage(builder.build()).complete();
+        return channel.sendMessageEmbeds(builder.build()).complete();
     }
 
     /**

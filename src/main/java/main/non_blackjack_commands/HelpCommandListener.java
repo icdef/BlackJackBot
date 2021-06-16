@@ -4,8 +4,10 @@ import main.Main;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.components.Button;
 import org.jetbrains.annotations.NotNull;
 
 public class HelpCommandListener extends ListenerAdapter {
@@ -44,7 +46,9 @@ public class HelpCommandListener extends ListenerAdapter {
         String input = event.getMessage().getContentRaw();
         if (input.equals("help")) {
             event.getAuthor().openPrivateChannel().queue(
-                    privateChannel -> privateChannel.sendMessage(commandsEmbed(event.getJDA())).queue());
+                    privateChannel -> privateChannel.sendMessageEmbeds(commandsEmbed(event.getJDA())).queue());
         }
     }
+
+
 }
