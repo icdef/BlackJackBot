@@ -14,6 +14,7 @@ import java.awt.*;
 import java.util.*;
 
 public class GameActions {
+    private static final String BOT_TAG = "BlackJackBot#1745";
     private final Player dealer = new Player("Dealer");
     private final Hand dealerHand = dealer.getCurrentHand();
     private final Deque<Player> playersInGame = new ArrayDeque<>();
@@ -44,7 +45,7 @@ public class GameActions {
      *
      * @return true when active is playing a split hand. Otherwise false
      */
-    private boolean playerCurrentlySplitting() {
+    private boolean isPlayerCurrentlySplitting() {
         return splitPlayers.containsValue(activePlayer) || splitPlayers.containsKey(activePlayer);
     }
 
@@ -54,7 +55,7 @@ public class GameActions {
      * @param player
      * @return true when the param player equals to active player. Otherwise false
      */
-    public boolean commandFromCorrectPlayer(Player player) {
+    public boolean isCommandFromCorrectPlayer(Player player) {
         if (player == null)
             return false;
         return player.equals(activePlayer);
@@ -65,10 +66,10 @@ public class GameActions {
      *
      * @return MessageEmbed with all the info of the current round
      */
-    private MessageEmbed currentRound() {
+    private MessageEmbed createCurrentRoundEmbed() {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Current Table");
-        builder.setAuthor(jda.getUserByTag("BlackJackBot#1745").getName(), null, jda.getUserByTag("BlackJackBot#1745").getAvatarUrl());
+        builder.setAuthor(jda.getUserByTag(BOT_TAG).getName(), null, jda.getUserByTag(BOT_TAG).getAvatarUrl());
         builder.addField(addActiveToNameWhenActivePlayer(dealer), dealer.getCurrentHand().toString(), false);
         for (Player p : players) {
             builder.addField(addActiveToNameWhenActivePlayer(p), p.getCurrentHand().toString(), false);
@@ -94,7 +95,7 @@ public class GameActions {
     private Message printCurrentGameWithActivePlayer() {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Current Table");
-        builder.setAuthor(jda.getUserByTag("BlackJackBot#1745").getName(), null, jda.getUserByTag("BlackJackBot#1745").getAvatarUrl());
+        builder.setAuthor(jda.getUserByTag(BOT_TAG).getName(), null, jda.getUserByTag(BOT_TAG).getAvatarUrl());
         if (activePlayer != dealer) {
             String split = allowedToSplit() ? ", split" : "";
             String doubleAble = allowedToDouble() ? ", double" : "";
@@ -187,8 +188,13 @@ public class GameActions {
      * dealer plays till he gets 17 or higher. Should only be called when the activePlayer is the dealer.
      *
      * @param message embed which describes the current round.
+     * @throws IllegalStateException when function is not called with dealer as active player
      */
+
     public void dealerPlay(Message message) {
+        if (activePlayer != dealer){
+            throw new IllegalStateException("Active Player should be dealer right now");
+        }
         Hand activePlayerCurrentHand = activePlayer.getCurrentHand();
         while (activePlayerCurrentHand.getCurrentHandValue() < 17) {
             try {
@@ -203,10 +209,11 @@ public class GameActions {
                     activePlayerCurrentHand.setBusted(true);
                     nrOfBustedPlayers++;
                 }
-                message.editMessage(currentRound()).complete();
+                message.editMessage(createCurrentRoundEmbed()).complete();
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 System.out.println("Dealer got interrupted");
+                Thread.currentThread().interrupt();
             }
         }
 
@@ -274,7 +281,7 @@ public class GameActions {
      * @return true if allowed. Otherwise false
      */
     public boolean allowedToDouble() {
-        return activePlayer.getCurrentHand().getHandSize() == 2 && !playerCurrentlySplitting();
+        return activePlayer.getCurrentHand().getHandSize() == 2 && !isPlayerCurrentlySplitting();
     }
 
     /**
@@ -306,7 +313,7 @@ public class GameActions {
      * @return true when the play can split. Otherwise false
      */
     public boolean allowedToSplit() {
-        return activePlayer.getCurrentHand().isHandSplittable() && !playerCurrentlySplitting();
+        return activePlayer.getCurrentHand().isHandSplittable() && !isPlayerCurrentlySplitting();
     }
 
     /**
@@ -334,6 +341,11 @@ public class GameActions {
      * calculates the win/loss for all players and saves them into the player instances.
      */
     public void calculatePayout() {
+       calculateSplitPlayersPayout();
+       calculateNonSplitPlayersPayout();
+    }
+
+    private void calculateSplitPlayersPayout(){
         // all the cases where a player split
         for (Map.Entry<Player, Player> entry : splitPlayers.entrySet()) {
             Player fakePlayer = entry.getValue();
@@ -363,6 +375,8 @@ public class GameActions {
 
 
         }
+    }
+    private void calculateNonSplitPlayersPayout(){
         for (Player p : players) {
             Hand pHand = p.getCurrentHand();
             //blackjack

@@ -11,8 +11,8 @@ import java.io.InputStreamReader;
  * Thread which listens to System.in and shuts down the bot when writing 'exit' into console
  */
 public class Shut implements Runnable {
-    private JDA jda;
-    private IPlayerPersistent playerPersistent;
+    private final JDA jda;
+    private final IPlayerPersistent playerPersistent;
 
     public Shut(JDA jda, IPlayerPersistent playerPersistent) {
         this.jda = jda;

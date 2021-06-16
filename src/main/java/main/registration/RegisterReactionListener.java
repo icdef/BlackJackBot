@@ -9,7 +9,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class RegisterReactionListener extends ListenerAdapter {
 
-    private IPlayerPersistent playerPersistent;
+    private static final String REACTION_EMOTE_UNI_CODE = "U+2705";
+    private final IPlayerPersistent playerPersistent;
 
     public RegisterReactionListener(IPlayerPersistent playerPersistent) {
         this.playerPersistent = playerPersistent;
@@ -22,7 +23,7 @@ public class RegisterReactionListener extends ListenerAdapter {
             return;
         if (!event.getTextChannel().getId().equals(Main.REGISTER_CHANNEL_ID))
             return;
-        if (event.getReaction().getReactionEmote().getAsCodepoints().equalsIgnoreCase("U+2705")) {
+        if (event.getReaction().getReactionEmote().getAsCodepoints().equalsIgnoreCase(REACTION_EMOTE_UNI_CODE)) {
             // retrieving needed cause otherwise caching issues possible
             event.retrieveUser().queue(user -> playerPersistent.registerPlayer(user, event.getTextChannel()));
         }
@@ -36,7 +37,7 @@ public class RegisterReactionListener extends ListenerAdapter {
             return;
         if (!event.getTextChannel().getId().equals(Main.REGISTER_CHANNEL_ID))
             return;
-        if (event.getReaction().getReactionEmote().getAsCodepoints().equalsIgnoreCase("U+2705")) {
+        if (event.getReaction().getReactionEmote().getAsCodepoints().equalsIgnoreCase(REACTION_EMOTE_UNI_CODE)) {
             // retrieving needed cause otherwise caching issues possible
             event.retrieveUser().queue(user -> playerPersistent.registerPlayer(user, event.getTextChannel()));
 

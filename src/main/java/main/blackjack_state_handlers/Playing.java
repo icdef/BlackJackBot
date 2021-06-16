@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 public class Playing implements IGameAction {
 
 
-    private GameActions gameActions;
+    private final GameActions gameActions;
 
 
     public Playing(GameActions gameActions) {
@@ -18,18 +18,18 @@ public class Playing implements IGameAction {
 
     @Override
     public PlayState handleInput(String input, Player player, TextChannel channel) {
-        if (gameActions.commandFromCorrectPlayer(player) && input.equals("hit")) {
+        if (gameActions.isCommandFromCorrectPlayer(player) && input.equals("hit")) {
             if (gameActions.hit()) {
                 return PlayState.ROUND_OVER;
             }
 
         }
-        if (gameActions.commandFromCorrectPlayer(player) && input.equals("stand")) {
+        if (gameActions.isCommandFromCorrectPlayer(player) && input.equals("stand")) {
             if (gameActions.stand()) {
                 return PlayState.ROUND_OVER;
             }
         }
-        if (gameActions.commandFromCorrectPlayer(player) && input.equals("double")) {
+        if (gameActions.isCommandFromCorrectPlayer(player) && input.equals("double")) {
             if (gameActions.allowedToDouble()) {
                 if (gameActions.doubleMove()) {
                     return PlayState.ROUND_OVER;
@@ -37,7 +37,7 @@ public class Playing implements IGameAction {
             } else
                 channel.sendMessage("You are not allowed to double").queue();
         }
-        if (gameActions.commandFromCorrectPlayer(player) && input.equals("split")) {
+        if (gameActions.isCommandFromCorrectPlayer(player) && input.equals("split")) {
             if (gameActions.allowedToSplit()) {
                 gameActions.split();
             } else

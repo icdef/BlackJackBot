@@ -20,7 +20,6 @@ import java.util.Set;
 public class GameFlow extends ListenerAdapter {
 
     private final Set<Player> playerSet;
-    private final IPlayerPersistent playerPersistent;
     private final NumberFormat nf = new DecimalFormat("##.###");
     private final GameActions gameActions;
     private final JDA jda;
@@ -31,7 +30,6 @@ public class GameFlow extends ListenerAdapter {
     public GameFlow(PlayState playState, Set<Player> playerSet, IPlayerPersistent playerPersistent, GameActions gameActions, JDA jda) {
         this.playState = playState;
         this.playerSet = playerSet;
-        this.playerPersistent = playerPersistent;
         this.gameActions = gameActions;
         this.jda = jda;
         this.registeredPlayers = playerPersistent.readAlreadyRegisteredPlayers();

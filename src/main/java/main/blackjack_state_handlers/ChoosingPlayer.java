@@ -8,7 +8,7 @@ import java.util.Set;
 
 public class ChoosingPlayer implements IGameAction {
 
-    private Set<Player> playerSet;
+    private final Set<Player> playerSet;
 
     public ChoosingPlayer(Set<Player> playerSet) {
         this.playerSet = playerSet;

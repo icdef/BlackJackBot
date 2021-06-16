@@ -12,7 +12,7 @@ public class Player {
     private double money = 0;
     private double betAmount = 0;
     private double wonAmount = 0;
-    private Hand currentHand = new Hand();
+    private final Hand currentHand = new Hand();
 
     public Player(String uuid, String name, double money) {
         this.uuid = uuid;
