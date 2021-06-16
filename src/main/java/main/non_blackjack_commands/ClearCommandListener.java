@@ -19,12 +19,15 @@ public class ClearCommandListener extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
-        if (event.getAuthor().isBot())
+        if (event.getAuthor().isBot()) {
             return;
-        if (!event.getChannel().getId().equals(Main.PLAY_CHANNEL_ID))
+        }
+        if (!event.getChannel().getId().equals(Main.PLAY_CHANNEL_ID)) {
             return;
+        }
         String input = event.getMessage().getContentRaw();
-        if (input.equals("clear") && (playState == PlayState.NOT_PLAYING || playState == PlayState.CHOOSING_PLAYER)) {
+        if (input.equals("clear") &&
+                (playState == PlayState.NOT_PLAYING || playState == PlayState.CHOOSING_PLAYER)) {
             TextChannel channel = event.getChannel();
             channel.sendMessage("Bot is working, please wait...").complete();
             MessageHistory history = new MessageHistory(channel);
@@ -35,10 +38,8 @@ public class ClearCommandListener extends ListenerAdapter {
                 history.retrievePast(100).complete();
             }
 
-
-            channel.sendMessage("Messages deleted").queueAfter(1, TimeUnit.SECONDS, m -> m.delete().queueAfter(500, TimeUnit.MILLISECONDS));
-
-
+            channel.sendMessage("Messages deleted")
+                    .queueAfter(1, TimeUnit.SECONDS, m -> m.delete().queueAfter(500, TimeUnit.MILLISECONDS));
         }
     }
 }

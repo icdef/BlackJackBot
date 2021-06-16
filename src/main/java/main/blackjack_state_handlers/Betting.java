@@ -29,8 +29,9 @@ public class Betting implements IGameAction {
      */
     private boolean didAllPlayersBet() {
         for (Player player : playerSet) {
-            if (player.getBetAmount() == 0)
+            if (player.getBetAmount() == 0) {
                 return false;
+            }
         }
         return true;
     }
@@ -46,7 +47,8 @@ public class Betting implements IGameAction {
                 } else if (bet > 0) {
                     player.setBetAmount(bet);
                     player.reduceMoney(bet);
-                    channel.sendMessage(player.getNameNoTag() + " bet " + nf.format(player.getBetAmount())).queue();
+                    channel.sendMessage(player.getNameNoTag() + " bet " + nf.format(player.getBetAmount()))
+                            .queue();
                 } else {
                     channel.sendMessage("Invalid Bet").queue();
                 }

@@ -47,8 +47,9 @@ public class Hand {
     }
 
     public boolean isHandSplittable() {
-        if (currentHand.size() != 2)
+        if (currentHand.size() != 2) {
             return false;
+        }
         return currentHand.get(0).equals(currentHand.get(1));
     }
 
@@ -84,7 +85,8 @@ public class Hand {
     @Override
     public String toString() {
         if (blackJack) {
-            return String.format("Cards: %s (%d). That's BlackJack!", getCurrentHandString(), getCurrentHandValue());
+            return String.format("Cards: %s (%d). That's BlackJack!", getCurrentHandString(),
+                    getCurrentHandValue());
         }
         return busted ?
                 String.format("Cards: %s (%d) busted", getCurrentHandString(), getCurrentHandValue())

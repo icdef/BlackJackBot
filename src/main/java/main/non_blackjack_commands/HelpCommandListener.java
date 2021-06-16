@@ -12,10 +12,13 @@ public class HelpCommandListener extends ListenerAdapter {
 
     private MessageEmbed commandsEmbed(JDA jda) {
         EmbedBuilder builder = new EmbedBuilder();
-        builder.setAuthor(jda.getUserByTag("BlackJackBot#1745").getName(), null, jda.getUserByTag("BlackJackBot#1745").getAvatarUrl());
+        builder.setAuthor(jda.getUserByTag("BlackJackBot#1745").getName(), null,
+                jda.getUserByTag("BlackJackBot#1745").getAvatarUrl());
         builder.setTitle("Commands for blackjack-table");
         builder.addField("blackjack", "starts the blackjack session", false);
-        builder.addField("stop", "stops the blackjack session and bot goes to standby. (only possible when people are able to join and leave)", false);
+        builder.addField("stop",
+                "stops the blackjack session and bot goes to standby. (only possible when people are able to join and leave)",
+                false);
         builder.addField("join", "join the table for one or more blackjack round(s)", false);
         builder.addField("leave", "leaving the table", false);
         builder.addField("start", "when all players joined, \"start\" starts the round", false);
@@ -31,14 +34,17 @@ public class HelpCommandListener extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
-        if (event.getAuthor().isBot())
+        if (event.getAuthor().isBot()) {
             return;
-        if (!event.getChannel().getId().equals(Main.PLAY_CHANNEL_ID))
+        }
+        if (!event.getChannel().getId().equals(Main.PLAY_CHANNEL_ID)) {
             return;
+        }
 
         String input = event.getMessage().getContentRaw();
         if (input.equals("help")) {
-            event.getAuthor().openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage(commandsEmbed(event.getJDA())).queue());
+            event.getAuthor().openPrivateChannel().queue(
+                    privateChannel -> privateChannel.sendMessage(commandsEmbed(event.getJDA())).queue());
         }
     }
 }

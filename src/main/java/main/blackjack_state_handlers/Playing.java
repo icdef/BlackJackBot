@@ -34,14 +34,16 @@ public class Playing implements IGameAction {
                 if (gameActions.doubleMove()) {
                     return PlayState.ROUND_OVER;
                 }
-            } else
+            } else {
                 channel.sendMessage("You are not allowed to double").queue();
+            }
         }
         if (gameActions.isCommandFromCorrectPlayer(player) && input.equals("split")) {
             if (gameActions.allowedToSplit()) {
                 gameActions.split();
-            } else
+            } else {
                 channel.sendMessage("You are not allowed to split").queue();
+            }
         }
         return PlayState.PLAYING;
     }

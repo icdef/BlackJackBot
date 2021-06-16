@@ -23,11 +23,13 @@ public class GameFlow extends ListenerAdapter {
     private final NumberFormat nf = new DecimalFormat("##.###");
     private final GameActions gameActions;
     private final JDA jda;
-    private final EnumMap<PlayState, IGameAction> playStateIGameActionMap = new EnumMap<>(PlayState.class);
+    private final EnumMap<PlayState, IGameAction> playStateIGameActionMap =
+            new EnumMap<>(PlayState.class);
     private final Map<String, Player> registeredPlayers;
     private PlayState playState;
 
-    public GameFlow(PlayState playState, Set<Player> playerSet, IPlayerPersistent playerPersistent, GameActions gameActions, JDA jda) {
+    public GameFlow(PlayState playState, Set<Player> playerSet, IPlayerPersistent playerPersistent,
+                    GameActions gameActions, JDA jda) {
         this.playState = playState;
         this.playerSet = playerSet;
         this.gameActions = gameActions;
@@ -50,10 +52,12 @@ public class GameFlow extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
-        if (event.getAuthor().isBot())
+        if (event.getAuthor().isBot()) {
             return;
-        if (!event.getChannel().getId().equals(Main.PLAY_CHANNEL_ID))
+        }
+        if (!event.getChannel().getId().equals(Main.PLAY_CHANNEL_ID)) {
             return;
+        }
         String input = event.getMessage().getContentRaw();
         TextChannel channel = event.getChannel();
         Player player = registeredPlayers.get(event.getAuthor().getId());
@@ -74,13 +78,15 @@ public class GameFlow extends ListenerAdapter {
      */
     public PlayState roundOver(TextChannel channel) {
         EmbedBuilder builder = new EmbedBuilder();
-        builder.setAuthor(jda.getUserByTag("BlackJackBot#1745").getName(), null, jda.getUserByTag("BlackJackBot#1745").getAvatarUrl());
+        builder.setAuthor(jda.getUserByTag("BlackJackBot#1745").getName(), null,
+                jda.getUserByTag("BlackJackBot#1745").getAvatarUrl());
         builder.setTitle("ROUND OVER");
 
         gameActions.calculatePayout();
         for (Player p : playerSet) {
-            String fieldName = p.getNameNoTag() + (p.getWonAmount() > 0 ? " won $" + nf.format(p.getWonAmount()) :
-                    p.getWonAmount() < 0 ? " lost $" + nf.format(Math.abs(p.getWonAmount())) : " push");
+            String fieldName =
+                    p.getNameNoTag() + (p.getWonAmount() > 0 ? " won $" + nf.format(p.getWonAmount()) :
+                            p.getWonAmount() < 0 ? " lost $" + nf.format(Math.abs(p.getWonAmount())) : " push");
             builder.addField(fieldName, "Current balance: $" + nf.format(p.getMoney()), false);
         }
         builder.setFooter("Players can join and leave or start the next round");

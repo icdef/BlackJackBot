@@ -56,8 +56,9 @@ public class GameActions {
      * @return true when the param player equals to active player. Otherwise false
      */
     public boolean isCommandFromCorrectPlayer(Player player) {
-        if (player == null)
+        if (player == null) {
             return false;
+        }
         return player.equals(activePlayer);
     }
 
@@ -69,14 +70,17 @@ public class GameActions {
     private MessageEmbed createCurrentRoundEmbed() {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Current Table");
-        builder.setAuthor(jda.getUserByTag(BOT_TAG).getName(), null, jda.getUserByTag(BOT_TAG).getAvatarUrl());
-        builder.addField(addActiveToNameWhenActivePlayer(dealer), dealer.getCurrentHand().toString(), false);
+        builder.setAuthor(jda.getUserByTag(BOT_TAG).getName(), null,
+                jda.getUserByTag(BOT_TAG).getAvatarUrl());
+        builder.addField(addActiveToNameWhenActivePlayer(dealer), dealer.getCurrentHand().toString(),
+                false);
         for (Player p : players) {
             builder.addField(addActiveToNameWhenActivePlayer(p), p.getCurrentHand().toString(), false);
             builder.setColor(Color.black);
             Player splitPlayer = splitPlayers.get(p);
             if (splitPlayer != null) {
-                builder.addField(addActiveToNameWhenActivePlayer(splitPlayer), splitPlayer.getCurrentHand().toString(), false);
+                builder.addField(addActiveToNameWhenActivePlayer(splitPlayer),
+                        splitPlayer.getCurrentHand().toString(), false);
             }
         }
         return builder.build();
@@ -95,19 +99,22 @@ public class GameActions {
     private Message printCurrentGameWithActivePlayer() {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Current Table");
-        builder.setAuthor(jda.getUserByTag(BOT_TAG).getName(), null, jda.getUserByTag(BOT_TAG).getAvatarUrl());
+        builder.setAuthor(jda.getUserByTag(BOT_TAG).getName(), null,
+                jda.getUserByTag(BOT_TAG).getAvatarUrl());
         if (activePlayer != dealer) {
             String split = allowedToSplit() ? ", split" : "";
             String doubleAble = allowedToDouble() ? ", double" : "";
             String fieldValue = "hit, stand" + split + doubleAble;
             builder.addField("Possible moves", fieldValue, false);
         }
-        builder.addField(addActiveToNameWhenActivePlayer(dealer), dealer.getCurrentHand().toString(), false);
+        builder.addField(addActiveToNameWhenActivePlayer(dealer), dealer.getCurrentHand().toString(),
+                false);
         for (Player p : players) {
             builder.addField(addActiveToNameWhenActivePlayer(p), p.getCurrentHand().toString(), false);
             Player splitPlayer = splitPlayers.get(p);
             if (splitPlayer != null) {
-                builder.addField(addActiveToNameWhenActivePlayer(splitPlayer), splitPlayer.getCurrentHand().toString(), false);
+                builder.addField(addActiveToNameWhenActivePlayer(splitPlayer),
+                        splitPlayer.getCurrentHand().toString(), false);
             }
         }
         return channel.sendMessage(builder.build()).complete();
@@ -166,12 +173,14 @@ public class GameActions {
         int nrOfBlackjacks = 0;
         while (activePlayer != dealer) {
             Hand activePlayerCurrentHand = activePlayer.getCurrentHand();
-            if (activePlayerCurrentHand.getHandSize() == 2 && activePlayerCurrentHand.getCurrentHandValue() == 21) {
+            if (activePlayerCurrentHand.getHandSize() == 2 &&
+                    activePlayerCurrentHand.getCurrentHandValue() == 21) {
                 activePlayerCurrentHand.setBlackJack(true);
                 activePlayer = playersInGame.pop();
                 nrOfBlackjacks++;
-            } else
+            } else {
                 break;
+            }
         }
         if (nrOfBlackjacks == players.size()) {
             allHadBlackjack = true;
@@ -192,19 +201,21 @@ public class GameActions {
      */
 
     public void dealerPlay(Message message) {
-        if (activePlayer != dealer){
+        if (activePlayer != dealer) {
             throw new IllegalStateException("Active Player should be dealer right now");
         }
         Hand activePlayerCurrentHand = activePlayer.getCurrentHand();
         while (activePlayerCurrentHand.getCurrentHandValue() < 17) {
             try {
                 activePlayerCurrentHand.addCardToHand(deck.pop());
-                if (activePlayerCurrentHand.getHandSize() == 2 && activePlayerCurrentHand.getCurrentHandValue() == 21) {
+                if (activePlayerCurrentHand.getHandSize() == 2 &&
+                        activePlayerCurrentHand.getCurrentHandValue() == 21) {
                     activePlayerCurrentHand.setBlackJack(true);
                 }
                 // everyone already won or lost
-                if (allHadBlackjack || nrOfBustedPlayers == (splitPlayers.size() + players.size()))
+                if (allHadBlackjack || nrOfBustedPlayers == (splitPlayers.size() + players.size())) {
                     return;
+                }
                 if (activePlayerCurrentHand.getCurrentHandValue() > 21) {
                     activePlayerCurrentHand.setBusted(true);
                     nrOfBustedPlayers++;
@@ -229,7 +240,8 @@ public class GameActions {
             return;
         }
         Hand activePlayerCurrentHand = activePlayer.getCurrentHand();
-        if (activePlayerCurrentHand.getHandSize() == 2 && activePlayerCurrentHand.getCurrentHandValue() == 21) {
+        if (activePlayerCurrentHand.getHandSize() == 2 &&
+                activePlayerCurrentHand.getCurrentHandValue() == 21) {
             activePlayerCurrentHand.setBlackJack(true);
             nextPlayersTurn();
         }
@@ -341,11 +353,11 @@ public class GameActions {
      * calculates the win/loss for all players and saves them into the player instances.
      */
     public void calculatePayout() {
-       calculateSplitPlayersPayout();
-       calculateNonSplitPlayersPayout();
+        calculateSplitPlayersPayout();
+        calculateNonSplitPlayersPayout();
     }
 
-    private void calculateSplitPlayersPayout(){
+    private void calculateSplitPlayersPayout() {
         // all the cases where a player split
         for (Map.Entry<Player, Player> entry : splitPlayers.entrySet()) {
             Player fakePlayer = entry.getValue();
@@ -359,13 +371,16 @@ public class GameActions {
 
             }
             // won
-            else if ((!fakePlayerHand.isBusted() && dealerHand.isBusted()) || (!fakePlayerHand.isBusted() && !dealerHand.isBusted() && fakePlayerHand.getCurrentHandValue() > dealerHand.getCurrentHandValue())) {
+            else if ((!fakePlayerHand.isBusted() && dealerHand.isBusted()) ||
+                    (!fakePlayerHand.isBusted() && !dealerHand.isBusted() &&
+                            fakePlayerHand.getCurrentHandValue() > dealerHand.getCurrentHandValue())) {
                 realPlayer.addMoney(realPlayer.getBetAmount() * 2);
                 realPlayer.addWonAmount(realPlayer.getBetAmount() * 2);
 
             }
             // push
-            else if (!fakePlayerHand.isBusted() && !dealerHand.isBusted() && fakePlayerHand.getCurrentHandValue() == dealerHand.getCurrentHandValue()) {
+            else if (!fakePlayerHand.isBusted() && !dealerHand.isBusted() &&
+                    fakePlayerHand.getCurrentHandValue() == dealerHand.getCurrentHandValue()) {
                 realPlayer.addMoney(realPlayer.getBetAmount());
             }
             // lost
@@ -376,7 +391,8 @@ public class GameActions {
 
         }
     }
-    private void calculateNonSplitPlayersPayout(){
+
+    private void calculateNonSplitPlayersPayout() {
         for (Player p : players) {
             Hand pHand = p.getCurrentHand();
             //blackjack
@@ -385,13 +401,16 @@ public class GameActions {
                 p.addMoney(p.getBetAmount() * 2.5);
             }
             // won
-            else if ((!pHand.isBusted() && dealerHand.isBusted()) || (!pHand.isBusted() && !dealerHand.isBusted() && pHand.getCurrentHandValue() > dealerHand.getCurrentHandValue())) {
+            else if ((!pHand.isBusted() && dealerHand.isBusted()) ||
+                    (!pHand.isBusted() && !dealerHand.isBusted() &&
+                            pHand.getCurrentHandValue() > dealerHand.getCurrentHandValue())) {
                 p.addMoney(p.getBetAmount() * 2);
                 p.addWonAmount(p.getBetAmount() * 2);
 
             }
             // push
-            else if (!pHand.isBusted() && !dealerHand.isBusted() && pHand.getCurrentHandValue() == dealerHand.getCurrentHandValue()) {
+            else if (!pHand.isBusted() && !dealerHand.isBusted() &&
+                    pHand.getCurrentHandValue() == dealerHand.getCurrentHandValue()) {
                 p.addMoney(p.getBetAmount());
             }
             // lost

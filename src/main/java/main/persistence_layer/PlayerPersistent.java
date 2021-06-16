@@ -14,7 +14,8 @@ import java.util.concurrent.TimeUnit;
 
 public class PlayerPersistent implements IPlayerPersistent {
 
-    private final String fileRegisteredPlayersPath = Paths.get(System.getProperty("user.dir"), "AllPlayers.csv").toString();
+    private final String fileRegisteredPlayersPath =
+            Paths.get(System.getProperty("user.dir"), "AllPlayers.csv").toString();
     private final Map<String, Player> registeredPlayers = new HashMap<>();
     private final File fileRegisteredPlayers = new File(fileRegisteredPlayersPath);
     private final JDA jda;
@@ -30,7 +31,9 @@ public class PlayerPersistent implements IPlayerPersistent {
             while (scanner.hasNext()) {
                 String line = scanner.nextLine();
                 String[] lineSplitted = line.split(";");
-                registeredPlayers.put(lineSplitted[0], new Player(lineSplitted[0], jda.retrieveUserById(lineSplitted[0]).complete().getAsTag(), Double.parseDouble(lineSplitted[1])));
+                registeredPlayers.put(lineSplitted[0],
+                        new Player(lineSplitted[0], jda.retrieveUserById(lineSplitted[0]).complete().getAsTag(),
+                                Double.parseDouble(lineSplitted[1])));
             }
         } catch (FileNotFoundException e) {
             try {
@@ -47,15 +50,20 @@ public class PlayerPersistent implements IPlayerPersistent {
 
     public void registerPlayer(User user, TextChannel channel) {
         if (!registeredPlayers.containsKey(user.getId())) {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileRegisteredPlayers, true))) {
+            try (
+                    BufferedWriter writer = new BufferedWriter(
+                            new FileWriter(fileRegisteredPlayers, true))) {
                 writer.write(user.getId() + ";1000\n");
                 registeredPlayers.put(user.getId(), new Player(user.getId(), user.getAsTag(), 1000));
-                channel.sendMessage(user.getAsTag() + " got registered! You start with 1000 coins").queue(msg -> msg.delete().queueAfter(2, TimeUnit.SECONDS));
+                channel.sendMessage(user.getAsTag() + " got registered! You start with 1000 coins")
+                        .queue(msg -> msg.delete().queueAfter(2, TimeUnit.SECONDS));
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } else
-            channel.sendMessage("You are already registered").queue(msg -> msg.delete().queueAfter(2, TimeUnit.SECONDS));
+        } else {
+            channel.sendMessage("You are already registered")
+                    .queue(msg -> msg.delete().queueAfter(2, TimeUnit.SECONDS));
+        }
     }
 
     public void writePlayersBackToFile() {

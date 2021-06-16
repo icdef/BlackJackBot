@@ -23,7 +23,8 @@ public class Main {
 
     public static void main(String[] args) throws LoginException, InterruptedException {
 
-        JDABuilder jdaBuilder = JDABuilder.createDefault("");
+        JDABuilder jdaBuilder =
+                JDABuilder.createDefault("");
         JDA jda = jdaBuilder.build();
         jda.awaitReady();
         System.out.println("Bot is on");
@@ -40,7 +41,8 @@ public class Main {
         GameActions gameActions = new GameActions(jda);
 
         jda.addEventListener(new RegisterReactionListener(playerPersistent),
-                new GameFlow(playState, playerSet, playerPersistent, gameActions, jda), new HelpCommandListener(), new ClearCommandListener(playState));
+                new GameFlow(playState, playerSet, playerPersistent, gameActions, jda),
+                new HelpCommandListener(), new ClearCommandListener(playState));
 
 
     }

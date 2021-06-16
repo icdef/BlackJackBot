@@ -17,8 +17,11 @@ public class EmbedMessageCreator {
     private void createEmbed(TextChannel channel) {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Let's Play BlackJack");
-        builder.addField("How?", "If you wanna play blackjack you need to be registered!\n React with the :white_check_mark: emote to register.", false);
-        builder.setAuthor(jda.getUserByTag("BlackJackBot#1745").getName(), null, jda.getUserByTag("BlackJackBot#1745").getAvatarUrl());
+        builder.addField("How?",
+                "If you wanna play blackjack you need to be registered!\n React with the :white_check_mark: emote to register.",
+                false);
+        builder.setAuthor(jda.getUserByTag("BlackJackBot#1745").getName(), null,
+                jda.getUserByTag("BlackJackBot#1745").getAvatarUrl());
         channel.sendMessage(builder.build()).queue(msg -> msg.addReaction("U+2705").queue());
     }
 
