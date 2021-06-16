@@ -1,9 +1,8 @@
 package main.blackjack_state_handlers;
 
-import main.game_control_files.GameActions;
-import main.game_control_files.GameFlow;
-import main.game_control_files.PlayState;
 import main.Player;
+import main.game_control_files.GameActions;
+import main.game_control_files.PlayState;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.text.DecimalFormat;
@@ -12,9 +11,9 @@ import java.util.Set;
 
 public class Betting implements IGameAction {
 
-    private NumberFormat nf = new DecimalFormat("##.###");
-    private Set<Player> playerSet;
-    private GameActions gameActions;
+    private final NumberFormat nf = new DecimalFormat("##.###");
+    private final Set<Player> playerSet;
+    private final GameActions gameActions;
 
 
     public Betting(Set<Player> playerSet, GameActions gameActions) {

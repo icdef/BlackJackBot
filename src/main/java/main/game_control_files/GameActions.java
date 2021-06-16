@@ -3,6 +3,7 @@ package main.game_control_files;
 import main.playing_cards.Card;
 import main.playing_cards.DeckUtility;
 import main.Player;
+import main.playing_cards.Hand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;
@@ -14,6 +15,7 @@ import java.util.*;
 
 public class GameActions {
     private final Player dealer = new Player("Dealer");
+    private final Hand dealerHand = dealer.getCurrentHand();
     private final Deque<Player> playersInGame = new ArrayDeque<>();
     private final JDA jda;
     private Set<Player> players;
@@ -22,6 +24,7 @@ public class GameActions {
     private Deque<Card> deck;
     private Player activePlayer;
     private boolean allHadBlackjack = false;
+    private int nrOfBustedPlayers = 0;
 
     public GameActions(JDA jda) {
         this.jda = jda;
@@ -66,13 +69,13 @@ public class GameActions {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Current Table");
         builder.setAuthor(jda.getUserByTag("BlackJackBot#1745").getName(), null, jda.getUserByTag("BlackJackBot#1745").getAvatarUrl());
-        builder.addField(addActiveToNameWhenActivePlayer(dealer), dealer.toString(), false);
+        builder.addField(addActiveToNameWhenActivePlayer(dealer), dealer.getCurrentHand().toString(), false);
         for (Player p : players) {
-            builder.addField(addActiveToNameWhenActivePlayer(p), p.toString(), false);
+            builder.addField(addActiveToNameWhenActivePlayer(p), p.getCurrentHand().toString(), false);
             builder.setColor(Color.black);
             Player splitPlayer = splitPlayers.get(p);
             if (splitPlayer != null) {
-                builder.addField(addActiveToNameWhenActivePlayer(splitPlayer), splitPlayer.toString(), false);
+                builder.addField(addActiveToNameWhenActivePlayer(splitPlayer), splitPlayer.getCurrentHand().toString(), false);
             }
         }
         return builder.build();
@@ -98,12 +101,12 @@ public class GameActions {
             String fieldValue = "hit, stand" + split + doubleAble;
             builder.addField("Possible moves", fieldValue, false);
         }
-        builder.addField(addActiveToNameWhenActivePlayer(dealer), dealer.toString(), false);
+        builder.addField(addActiveToNameWhenActivePlayer(dealer), dealer.getCurrentHand().toString(), false);
         for (Player p : players) {
-            builder.addField(addActiveToNameWhenActivePlayer(p), p.toString(), false);
+            builder.addField(addActiveToNameWhenActivePlayer(p), p.getCurrentHand().toString(), false);
             Player splitPlayer = splitPlayers.get(p);
             if (splitPlayer != null) {
-                builder.addField(addActiveToNameWhenActivePlayer(splitPlayer), splitPlayer.toString(), false);
+                builder.addField(addActiveToNameWhenActivePlayer(splitPlayer), splitPlayer.getCurrentHand().toString(), false);
             }
         }
         return channel.sendMessage(builder.build()).complete();
@@ -127,22 +130,22 @@ public class GameActions {
     public void setUp() {
         deck = new DeckUtility().generatePlayingDeck();
         for (Player player : players) {
-            player.addCardToHand(deck.pop());
+            player.getCurrentHand().addCardToHand(deck.pop());
         }
-        dealer.addCardToHand(deck.pop());
+        dealer.getCurrentHand().addCardToHand(deck.pop());
 
         for (Player player : players) {
-            player.addCardToHand(deck.pop());
+            player.getCurrentHand().addCardToHand(deck.pop());
         }
 
         // for debugging
-       /* Player[] playerTestArray = players.toArray(new Player[0]);
-        playerTestArray[0].removeACardFromHand();
-        playerTestArray[0].removeACardFromHand();
-        playerTestArray[0].addCardToHand(new Card(10, "K"));
-        playerTestArray[0].addCardToHand(new Card(10, "K"));
-        dealer.removeACardFromHand();
-        dealer.addCardToHand(new Card(10, "K"));*/
+/*        Player[] playerTestArray = players.toArray(new Player[0]);
+        Hand playerhand = playerTestArray[0].getCurrentHand();
+        playerhand.removeACardFromHand();
+        playerhand.removeACardFromHand();
+        playerhand.addCardToHand(new Card(10, "K"));
+        playerhand.addCardToHand(new Card(10, "K"));*/
+
 
 
         playersInGame.push(dealer);
@@ -162,8 +165,9 @@ public class GameActions {
     public boolean doAllPlayersHaveBlackJack() {
         int nrOfBlackjacks = 0;
         while (activePlayer != dealer) {
-            if (activePlayer.getHandSize() == 2 && activePlayer.getCurrentHandValue() == 21) {
-                activePlayer.setBlackJack(true);
+            Hand activePlayerCurrentHand = activePlayer.getCurrentHand();
+            if (activePlayerCurrentHand.getHandSize() == 2 && activePlayerCurrentHand.getCurrentHandValue() == 21) {
+                activePlayerCurrentHand.setBlackJack(true);
                 activePlayer = playersInGame.pop();
                 nrOfBlackjacks++;
             } else
@@ -186,18 +190,19 @@ public class GameActions {
      * @param message embed which describes the current round.
      */
     public void dealerPlay(Message message) {
-        while (activePlayer.getCurrentHandValue() < 17) {
+        Hand activePlayerCurrentHand = activePlayer.getCurrentHand();
+        while (activePlayerCurrentHand.getCurrentHandValue() < 17) {
             try {
-
-                activePlayer.addCardToHand(deck.pop());
-                if (activePlayer.getHandSize() == 2 && activePlayer.getCurrentHandValue() == 21) {
-                    activePlayer.setBlackJack(true);
+                activePlayerCurrentHand.addCardToHand(deck.pop());
+                if (activePlayerCurrentHand.getHandSize() == 2 && activePlayerCurrentHand.getCurrentHandValue() == 21) {
+                    activePlayerCurrentHand.setBlackJack(true);
                 }
-                // everyone already won
-                if (allHadBlackjack)
+                // everyone already won or lost
+                if (allHadBlackjack || nrOfBustedPlayers == (splitPlayers.size() + players.size()))
                     return;
-                if (activePlayer.getCurrentHandValue() > 21) {
-                    activePlayer.setBusted(true);
+                if (activePlayerCurrentHand.getCurrentHandValue() > 21) {
+                    activePlayerCurrentHand.setBusted(true);
+                    nrOfBustedPlayers++;
                 }
                 message.editMessage(currentRound()).complete();
                 Thread.sleep(500);
@@ -218,8 +223,9 @@ public class GameActions {
         if (activePlayer == dealer){
             return;
         }
-        if (activePlayer.getHandSize() == 2 && activePlayer.getCurrentHandValue() == 21){
-            activePlayer.setBlackJack(true);
+        Hand activePlayerCurrentHand = activePlayer.getCurrentHand();
+        if (activePlayerCurrentHand.getHandSize() == 2 && activePlayerCurrentHand.getCurrentHandValue() == 21){
+            activePlayerCurrentHand.setBlackJack(true);
             nextPlayersTurn();
         }
 
@@ -231,12 +237,15 @@ public class GameActions {
      * @return true when all players played. Otherwise false
      */
     public boolean hit() {
-        activePlayer.addCardToHand(deck.pop());
-        if (activePlayer.getCurrentHandValue() > 21) {
-            activePlayer.setBusted(true);
+        Hand activePlayerCurrentHand = activePlayer.getCurrentHand();
+        activePlayerCurrentHand.addCardToHand(deck.pop());
+
+        if (activePlayerCurrentHand.getCurrentHandValue() > 21) {
+            activePlayerCurrentHand.setBusted(true);
+            nrOfBustedPlayers++;
             nextPlayersTurn();
         }
-        else if (activePlayer.getCurrentHandValue() == 21) {
+        else if (activePlayerCurrentHand.getCurrentHandValue() == 21) {
             activePlayer = playersInGame.pop();
         }
         Message message = printCurrentGameWithActivePlayer();
@@ -268,7 +277,7 @@ public class GameActions {
      * @return true if allowed. Otherwise false
      */
     public boolean allowedToDouble() {
-        return activePlayer.getHandSize() == 2 && !playerCurrentlySplitting();
+        return activePlayer.getCurrentHand().getHandSize() == 2 && !playerCurrentlySplitting();
     }
 
     /**
@@ -279,9 +288,11 @@ public class GameActions {
     public boolean doubleMove() {
         activePlayer.reduceMoney(activePlayer.getBetAmount());
         activePlayer.setBetAmount(activePlayer.getBetAmount() * 2);
-        activePlayer.addCardToHand(deck.pop());
-        if (activePlayer.getCurrentHandValue() > 21) {
-            activePlayer.setBusted(true);
+        Hand activePlayerCurrentHand = activePlayer.getCurrentHand();
+        activePlayerCurrentHand.addCardToHand(deck.pop());
+        if (activePlayerCurrentHand.getCurrentHandValue() > 21) {
+            activePlayerCurrentHand.setBusted(true);
+            nrOfBustedPlayers++;
         }
         nextPlayersTurn();
         Message message = printCurrentGameWithActivePlayer();
@@ -298,22 +309,25 @@ public class GameActions {
      * @return true when the play can split. Otherwise false
      */
     public boolean allowedToSplit() {
-        return activePlayer.isHandSplittable() && !playerCurrentlySplitting();
+        return activePlayer.getCurrentHand().isHandSplittable() && !playerCurrentlySplitting();
     }
 
     /**
      * Player splits his/her hand. Player will be put into the game as playerName split right after the first hand, so he/she can play both of the hands subsequently. Prints the current round state afterwards
      */
     public void split() {
+        Hand activePlayerCurrentHand = activePlayer.getCurrentHand();
         activePlayer.reduceMoney(activePlayer.getBetAmount());
+
         Player fakePlayer = new Player(activePlayer.getUuid(),activePlayer.getName());
-        fakePlayer.addCardToHand(activePlayer.removeACardFromHand());
-        activePlayer.addCardToHand(deck.pop());
-        fakePlayer.addCardToHand(deck.pop());
+        fakePlayer.getCurrentHand().addCardToHand(activePlayerCurrentHand.removeACardFromHand());
+        activePlayerCurrentHand.addCardToHand(deck.pop());
+        fakePlayer.getCurrentHand().addCardToHand(deck.pop());
         splitPlayers.put(activePlayer, fakePlayer);
         playersInGame.push(fakePlayer);
-        if (activePlayer.getCurrentHandValue() == 21) {
-            activePlayer.setBlackJack(true);
+
+        if (activePlayerCurrentHand.getCurrentHandValue() == 21) {
+            activePlayerCurrentHand.setBlackJack(true);
             nextPlayersTurn();
         }
         printCurrentGameWithActivePlayer();
@@ -326,22 +340,23 @@ public class GameActions {
         // all the cases where a player split
         for (Map.Entry<Player, Player> entry : splitPlayers.entrySet()) {
             Player fakePlayer = entry.getValue();
+            Hand fakePlayerHand = fakePlayer.getCurrentHand();
             Player realPlayer = entry.getKey();
 
             // blackjack
-            if (fakePlayer.isBlackJack() && !dealer.isBlackJack()) {
+            if (fakePlayerHand.isBlackJack() && !dealerHand.isBlackJack()) {
                 realPlayer.addMoney(realPlayer.getBetAmount() * 2.5 );
                 realPlayer.addWonAmount(realPlayer.getBetAmount() * 2.5);
 
             }
             // won
-            else if ((!fakePlayer.isBusted() && dealer.isBusted()) || (!fakePlayer.isBusted() && !dealer.isBusted() && fakePlayer.getCurrentHandValue() > dealer.getCurrentHandValue())) {
+            else if ((!fakePlayerHand.isBusted() && dealerHand.isBusted()) || (!fakePlayerHand.isBusted() && !dealerHand.isBusted() && fakePlayerHand.getCurrentHandValue() > dealerHand.getCurrentHandValue())) {
                 realPlayer.addMoney(realPlayer.getBetAmount() * 2);
                 realPlayer.addWonAmount(realPlayer.getBetAmount() * 2);
 
             }
             // push
-            else if (!fakePlayer.isBusted() && !dealer.isBusted() && fakePlayer.getCurrentHandValue() == dealer.getCurrentHandValue()) {
+            else if (!fakePlayerHand.isBusted() && !dealerHand.isBusted() && fakePlayerHand.getCurrentHandValue() == dealerHand.getCurrentHandValue()) {
                 realPlayer.addMoney(realPlayer.getBetAmount());
             }
             // lost
@@ -352,20 +367,20 @@ public class GameActions {
 
         }
         for (Player p : players) {
-
+            Hand pHand = p.getCurrentHand();
             //blackjack
-            if (p.isBlackJack() && !dealer.isBlackJack()) {
+            if (pHand.isBlackJack() && !dealerHand.isBlackJack()) {
                 p.addWonAmount(p.getBetAmount() * 2.5);
                 p.addMoney(p.getBetAmount() * 2.5);
             }
             // won
-            else if ((!p.isBusted() && dealer.isBusted()) || (!p.isBusted() && !dealer.isBusted() && p.getCurrentHandValue() > dealer.getCurrentHandValue())) {
+            else if ((!pHand.isBusted() && dealerHand.isBusted()) || (!pHand.isBusted() && !dealerHand.isBusted() && pHand.getCurrentHandValue() > dealerHand.getCurrentHandValue())) {
                 p.addMoney(p.getBetAmount() * 2);
                 p.addWonAmount(p.getBetAmount() * 2);
 
             }
             // push
-            else if (!p.isBusted() && !dealer.isBusted() && p.getCurrentHandValue() == dealer.getCurrentHandValue()) {
+            else if (!pHand.isBusted() && !dealerHand.isBusted() && pHand.getCurrentHandValue() == dealerHand.getCurrentHandValue()) {
                 p.addMoney(p.getBetAmount());
             }
             // lost
