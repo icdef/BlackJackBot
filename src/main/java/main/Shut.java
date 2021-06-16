@@ -1,10 +1,11 @@
 package main;
 
 import main.persistence_layer.IPlayerPersistent;
-import main.persistence_layer.PlayerPersistent;
 import net.dv8tion.jda.api.JDA;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * Thread which listens to System.in and shuts down the bot when writing 'exit' into console

@@ -1,8 +1,8 @@
 package main.game_control_files;
 
+import main.Player;
 import main.playing_cards.Card;
 import main.playing_cards.DeckUtility;
-import main.Player;
 import main.playing_cards.Hand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -147,10 +147,9 @@ public class GameActions {
         playerhand.addCardToHand(new Card(10, "K"));*/
 
 
-
         playersInGame.push(dealer);
         Player[] playerArray = players.toArray(new Player[0]);
-        for (int i = playerArray.length-1; i >= 0 ; i--) {
+        for (int i = playerArray.length - 1; i >= 0; i--) {
             playersInGame.push(playerArray[i]);
         }
         activePlayer = playersInGame.pop();
@@ -206,8 +205,7 @@ public class GameActions {
                 }
                 message.editMessage(currentRound()).complete();
                 Thread.sleep(500);
-            }
-            catch (InterruptedException e ) {
+            } catch (InterruptedException e) {
                 System.out.println("Dealer got interrupted");
             }
         }
@@ -218,13 +216,13 @@ public class GameActions {
     /**
      * next players turn. when next player has black jack recursively goes to next player till its dealer's turn
      */
-    public void nextPlayersTurn(){
+    public void nextPlayersTurn() {
         activePlayer = playersInGame.pop();
-        if (activePlayer == dealer){
+        if (activePlayer == dealer) {
             return;
         }
         Hand activePlayerCurrentHand = activePlayer.getCurrentHand();
-        if (activePlayerCurrentHand.getHandSize() == 2 && activePlayerCurrentHand.getCurrentHandValue() == 21){
+        if (activePlayerCurrentHand.getHandSize() == 2 && activePlayerCurrentHand.getCurrentHandValue() == 21) {
             activePlayerCurrentHand.setBlackJack(true);
             nextPlayersTurn();
         }
@@ -244,8 +242,7 @@ public class GameActions {
             activePlayerCurrentHand.setBusted(true);
             nrOfBustedPlayers++;
             nextPlayersTurn();
-        }
-        else if (activePlayerCurrentHand.getCurrentHandValue() == 21) {
+        } else if (activePlayerCurrentHand.getCurrentHandValue() == 21) {
             activePlayer = playersInGame.pop();
         }
         Message message = printCurrentGameWithActivePlayer();
@@ -319,7 +316,7 @@ public class GameActions {
         Hand activePlayerCurrentHand = activePlayer.getCurrentHand();
         activePlayer.reduceMoney(activePlayer.getBetAmount());
 
-        Player fakePlayer = new Player(activePlayer.getUuid(),activePlayer.getName());
+        Player fakePlayer = new Player(activePlayer.getUuid(), activePlayer.getName());
         fakePlayer.getCurrentHand().addCardToHand(activePlayerCurrentHand.removeACardFromHand());
         activePlayerCurrentHand.addCardToHand(deck.pop());
         fakePlayer.getCurrentHand().addCardToHand(deck.pop());
@@ -345,7 +342,7 @@ public class GameActions {
 
             // blackjack
             if (fakePlayerHand.isBlackJack() && !dealerHand.isBlackJack()) {
-                realPlayer.addMoney(realPlayer.getBetAmount() * 2.5 );
+                realPlayer.addMoney(realPlayer.getBetAmount() * 2.5);
                 realPlayer.addWonAmount(realPlayer.getBetAmount() * 2.5);
 
             }

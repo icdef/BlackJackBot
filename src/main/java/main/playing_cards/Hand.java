@@ -1,7 +1,5 @@
 package main.playing_cards;
 
-import main.Player;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,6 +73,7 @@ public class Hand {
         }
         return sum;
     }
+
     public void resetHand() {
         currentHand.clear();
         amountOfAces = 0;

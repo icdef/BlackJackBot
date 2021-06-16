@@ -1,8 +1,8 @@
 package main.game_control_files;
 
-import main.*;
-import main.blackjack_state_handlers.*;
+import main.Main;
 import main.Player;
+import main.blackjack_state_handlers.*;
 import main.persistence_layer.IPlayerPersistent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -38,18 +38,16 @@ public class GameFlow extends ListenerAdapter {
         initializingMap();
     }
 
-    private void initializingMap(){
+    private void initializingMap() {
         IGameAction notPlaying = new NotPlaying();
         IGameAction choosingPlayer = new ChoosingPlayer(playerSet);
-        IGameAction betting = new Betting(playerSet,gameActions);
+        IGameAction betting = new Betting(playerSet, gameActions);
         IGameAction playing = new Playing(gameActions);
-        playStateIGameActionMap.put(PlayState.NOT_PLAYING,notPlaying);
-        playStateIGameActionMap.put(PlayState.CHOOSING_PLAYER,choosingPlayer);
-        playStateIGameActionMap.put(PlayState.BETTING,betting);
-        playStateIGameActionMap.put(PlayState.PLAYING,playing);
+        playStateIGameActionMap.put(PlayState.NOT_PLAYING, notPlaying);
+        playStateIGameActionMap.put(PlayState.CHOOSING_PLAYER, choosingPlayer);
+        playStateIGameActionMap.put(PlayState.BETTING, betting);
+        playStateIGameActionMap.put(PlayState.PLAYING, playing);
     }
-
-
 
 
     @Override
@@ -61,8 +59,8 @@ public class GameFlow extends ListenerAdapter {
         String input = event.getMessage().getContentRaw();
         TextChannel channel = event.getChannel();
         Player player = registeredPlayers.get(event.getAuthor().getId());
-        playState = playStateIGameActionMap.get(playState).handleInput(input,player,channel);
-        if (playState == PlayState.ROUND_OVER){
+        playState = playStateIGameActionMap.get(playState).handleInput(input, player, channel);
+        if (playState == PlayState.ROUND_OVER) {
             roundOver(channel);
             playState = PlayState.CHOOSING_PLAYER;
         }

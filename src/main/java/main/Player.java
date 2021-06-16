@@ -1,10 +1,7 @@
 package main;
 
-import main.playing_cards.Card;
 import main.playing_cards.Hand;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class Player {
@@ -26,7 +23,8 @@ public class Player {
     public Player(String name) {
         this.name = name;
     }
-    public Player(String uuid, String name){
+
+    public Player(String uuid, String name) {
         this.uuid = uuid;
         this.name = name;
     }
@@ -65,7 +63,6 @@ public class Player {
     }
 
 
-
     public void reduceMoney(double money) {
         this.money -= money;
     }
@@ -73,7 +70,6 @@ public class Player {
     public void addMoney(double money) {
         this.money += money;
     }
-
 
 
     public void resetPlayer() {
@@ -98,8 +94,6 @@ public class Player {
     public int hashCode() {
         return Objects.hash(uuid);
     }
-
-
 
 
 }

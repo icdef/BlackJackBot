@@ -12,7 +12,7 @@ public class EmbedMessageCreator {
 
     public EmbedMessageCreator(JDA jda) {
         this.jda = jda;
-      }
+    }
 
     private void createEmbed(TextChannel channel) {
         EmbedBuilder builder = new EmbedBuilder();

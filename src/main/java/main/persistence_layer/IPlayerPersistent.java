@@ -18,8 +18,8 @@ public interface IPlayerPersistent {
     /**
      * Registers a player for the BlackJack game. Prints the feedback of the registration to the channel.
      *
-     * @param user the new Player
-     * @param channel  text channel where the answer is written to
+     * @param user    the new Player
+     * @param channel text channel where the answer is written to
      */
     void registerPlayer(User user, TextChannel channel);
 

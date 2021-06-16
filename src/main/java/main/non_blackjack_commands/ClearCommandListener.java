@@ -29,16 +29,14 @@ public class ClearCommandListener extends ListenerAdapter {
             channel.sendMessage("Bot is working, please wait...").complete();
             MessageHistory history = new MessageHistory(channel);
             history.retrievePast(100).complete();
-            while(!history.getRetrievedHistory().isEmpty()) {
+            while (!history.getRetrievedHistory().isEmpty()) {
                 channel.deleteMessages(history.getRetrievedHistory()).complete();
                 history = new MessageHistory(channel);
                 history.retrievePast(100).complete();
             }
 
 
-
-
-            channel.sendMessage("Messages deleted").queueAfter(1,TimeUnit.SECONDS, m -> m.delete().queueAfter(500, TimeUnit.MILLISECONDS));
+            channel.sendMessage("Messages deleted").queueAfter(1, TimeUnit.SECONDS, m -> m.delete().queueAfter(500, TimeUnit.MILLISECONDS));
 
 
         }

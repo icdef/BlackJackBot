@@ -1,8 +1,7 @@
 package main.registration;
 
-import main.persistence_layer.IPlayerPersistent;
-import main.persistence_layer.PlayerPersistent;
 import main.Main;
+import main.persistence_layer.IPlayerPersistent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -10,12 +9,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class RegisterReactionListener extends ListenerAdapter {
 
-   private IPlayerPersistent playerPersistent;
+    private IPlayerPersistent playerPersistent;
 
     public RegisterReactionListener(IPlayerPersistent playerPersistent) {
         this.playerPersistent = playerPersistent;
     }
-
 
 
     @Override
