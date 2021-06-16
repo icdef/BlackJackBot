@@ -39,6 +39,10 @@ public class Betting implements IGameAction {
     @Override
     public PlayState handleInput(String input, Player player, TextChannel channel) {
         String[] inputSplitted = input.split(" ");
+        if (inputSplitted.length != 2) {
+            channel.sendMessage("Need to enter: bet <amount>").queue();
+            return PlayState.BETTING;
+        }
         if (player != null && playerSet.contains(player)) {
             try {
                 double bet = Double.parseDouble(inputSplitted[1]);

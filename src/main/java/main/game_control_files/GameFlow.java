@@ -90,7 +90,7 @@ public class GameFlow extends ListenerAdapter {
             builder.addField(fieldName, "Current balance: $" + nf.format(p.getMoney()), false);
         }
         builder.setFooter("Players can join and leave or start the next round");
-        channel.sendMessage(builder.build()).queue();
+        channel.sendMessageEmbeds(builder.build()).queue();
         gameActions.resetPlayers();
         return PlayState.CHOOSING_PLAYER;
     }

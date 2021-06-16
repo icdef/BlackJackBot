@@ -22,7 +22,7 @@ public class EmbedMessageCreator {
                 false);
         builder.setAuthor(jda.getUserByTag("BlackJackBot#1745").getName(), null,
                 jda.getUserByTag("BlackJackBot#1745").getAvatarUrl());
-        channel.sendMessage(builder.build()).queue(msg -> msg.addReaction("U+2705").queue());
+        channel.sendMessageEmbeds(builder.build()).queue(msg -> msg.addReaction("U+2705").queue());
     }
 
     /**

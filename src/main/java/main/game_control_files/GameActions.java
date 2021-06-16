@@ -117,7 +117,7 @@ public class GameActions {
                         splitPlayer.getCurrentHand().toString(), false);
             }
         }
-        return channel.sendMessage(builder.build()).complete();
+        return channel.sendMessageEmbeds(builder.build()).complete();
     }
 
     /**
@@ -220,7 +220,7 @@ public class GameActions {
                     activePlayerCurrentHand.setBusted(true);
                     nrOfBustedPlayers++;
                 }
-                message.editMessage(createCurrentRoundEmbed()).complete();
+                message.editMessageEmbeds(createCurrentRoundEmbed()).complete();
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 System.out.println("Dealer got interrupted");
