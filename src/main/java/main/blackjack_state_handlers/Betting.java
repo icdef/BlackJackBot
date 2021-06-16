@@ -15,12 +15,12 @@ public class Betting implements IGameAction {
     private NumberFormat nf = new DecimalFormat("##.###");
     private Set<Player> playerSet;
     private GameActions gameActions;
-    private GameFlow gameFlow;
 
-    public Betting(Set<Player> playerSet, GameActions gameActions, GameFlow gameFlow) {
+
+    public Betting(Set<Player> playerSet, GameActions gameActions) {
         this.playerSet = playerSet;
         this.gameActions = gameActions;
-        this.gameFlow = gameFlow;
+
     }
 
     /**
@@ -64,7 +64,7 @@ public class Betting implements IGameAction {
             gameActions.setPlayers(playerSet);
             gameActions.setUp();
             if (gameActions.doAllPlayersHaveBlackJack()) {
-                return gameFlow.roundOver(channel);
+                return PlayState.ROUND_OVER;
             }
             return PlayState.PLAYING;
 

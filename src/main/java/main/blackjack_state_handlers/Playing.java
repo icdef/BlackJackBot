@@ -10,30 +10,30 @@ public class Playing implements IGameAction {
 
 
     private GameActions gameActions;
-    private GameFlow gameFlow;
 
-    public Playing(GameActions gameActions, GameFlow gameFlow) {
+
+    public Playing(GameActions gameActions) {
         this.gameActions = gameActions;
-        this.gameFlow = gameFlow;
+
     }
 
     @Override
     public PlayState handleInput(String input, Player player, TextChannel channel) {
         if (gameActions.commandFromCorrectPlayer(player) && input.equals("hit")) {
             if (gameActions.hit()) {
-                return gameFlow.roundOver(channel);
+                return PlayState.ROUND_OVER;
             }
 
         }
         if (gameActions.commandFromCorrectPlayer(player) && input.equals("stand")) {
             if (gameActions.stand()) {
-                return gameFlow.roundOver(channel);
+                return PlayState.ROUND_OVER;
             }
         }
         if (gameActions.commandFromCorrectPlayer(player) && input.equals("double")) {
             if (gameActions.allowedToDouble()) {
                 if (gameActions.doubleMove()) {
-                    return gameFlow.roundOver(channel);
+                    return PlayState.ROUND_OVER;
                 }
             } else
                 channel.sendMessage("You are not allowed to double").queue();

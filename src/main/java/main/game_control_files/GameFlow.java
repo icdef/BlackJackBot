@@ -41,8 +41,8 @@ public class GameFlow extends ListenerAdapter {
     private void initializingMap(){
         IGameAction notPlaying = new NotPlaying();
         IGameAction choosingPlayer = new ChoosingPlayer(playerSet);
-        IGameAction betting = new Betting(playerSet,gameActions,this);
-        IGameAction playing = new Playing(gameActions,this);
+        IGameAction betting = new Betting(playerSet,gameActions);
+        IGameAction playing = new Playing(gameActions);
         playStateIGameActionMap.put(PlayState.NOT_PLAYING,notPlaying);
         playStateIGameActionMap.put(PlayState.CHOOSING_PLAYER,choosingPlayer);
         playStateIGameActionMap.put(PlayState.BETTING,betting);
@@ -62,6 +62,10 @@ public class GameFlow extends ListenerAdapter {
         TextChannel channel = event.getChannel();
         Player player = registeredPlayers.get(event.getAuthor().getId());
         playState = playStateIGameActionMap.get(playState).handleInput(input,player,channel);
+        if (playState == PlayState.ROUND_OVER){
+            roundOver(channel);
+            playState = PlayState.CHOOSING_PLAYER;
+        }
 
 
     }
