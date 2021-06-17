@@ -47,13 +47,13 @@ public class GameFlow extends ListenerAdapter {
 
     private void initializingMap() {
         IGameAction notPlaying = new NotPlaying();
-        IGameAction choosingPlayer = new ChoosingPlayer(playerSet);
-        IGameAction betting = new Betting(playerSet, gameActions);
-        IGameAction playing = new Playing(gameActions);
+       // IGameAction choosingPlayer = new ChoosingPlayer(playerSet);
+       // IGameAction betting = new Betting(playerSet, gameActions);
+       // IGameAction playing = new Playing(gameActions);
         playStateIGameActionMap.put(PlayState.NOT_PLAYING, notPlaying);
-        playStateIGameActionMap.put(PlayState.CHOOSING_PLAYER, choosingPlayer);
-        playStateIGameActionMap.put(PlayState.BETTING, betting);
-        playStateIGameActionMap.put(PlayState.PLAYING, playing);
+       // playStateIGameActionMap.put(PlayState.CHOOSING_PLAYER, choosingPlayer);
+       // playStateIGameActionMap.put(PlayState.BETTING, betting);
+       // playStateIGameActionMap.put(PlayState.PLAYING, playing);
     }
 
 
