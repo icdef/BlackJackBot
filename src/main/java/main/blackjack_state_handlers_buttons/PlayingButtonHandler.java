@@ -26,20 +26,15 @@ public class PlayingButtonHandler implements IGameActionButton{
             }
         }
         if (gameActions.isCommandFromCorrectPlayer(player) && input.equals("double")) {
-            if (gameActions.allowedToDouble()) {
                 if (gameActions.doubleMove()) {
                     return PlayState.ROUND_OVER;
                 }
-            } else {
-                event.editMessage("You are not allowed to double").queue();
-            }
         }
         if (gameActions.isCommandFromCorrectPlayer(player) && input.equals("split")) {
-            if (gameActions.allowedToSplit()) {
                 gameActions.split();
-            } else {
-                event.editMessage("You are not allowed to split").queue();
-            }
+        }
+        if (!gameActions.isCommandFromCorrectPlayer(player)){
+            event.deferEdit().queue();
         }
         return PlayState.PLAYING;
     }
