@@ -33,9 +33,7 @@ public class PlayingButtonHandler implements IGameActionButton{
         if (gameActions.isCommandFromCorrectPlayer(player) && input.equals("split")) {
                 gameActions.split();
         }
-        if (!gameActions.isCommandFromCorrectPlayer(player)){
-            event.deferEdit().queue();
-        }
+
         return PlayState.PLAYING;
     }
 
