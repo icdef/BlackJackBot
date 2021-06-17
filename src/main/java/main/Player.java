@@ -99,5 +99,11 @@ public class Player {
         return Objects.hash(uuid);
     }
 
-
+    @Override
+    public String toString() {
+        return "Player{" +
+                "name='" + name + '\'' +
+                ", currentHand=" + currentHand +
+                '}';
+    }
 }

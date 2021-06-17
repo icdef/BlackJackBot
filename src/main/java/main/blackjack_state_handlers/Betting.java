@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public class Betting implements IGameAction {
 
@@ -38,14 +39,9 @@ public class Betting implements IGameAction {
 
     @Override
     public PlayState handleInput(String input, Player player, TextChannel channel) {
-        String[] inputSplitted = input.split(" ");
-        if (inputSplitted.length != 2) {
-            channel.sendMessage("Please enter bet <amount>").queue();
-            return PlayState.BETTING;
-        }
         if (player != null && playerSet.contains(player)) {
             try {
-                double bet = Double.parseDouble(inputSplitted[1]);
+                double bet = Double.parseDouble(input);
                 if (bet > player.getMoney()) {
                     channel.sendMessage("You do not have enough money for that bet").queue();
                 } else if (bet > 0) {
@@ -64,7 +60,7 @@ public class Betting implements IGameAction {
         }
 
         if (didAllPlayersBet()) {
-            channel.sendMessage("All players bet. Starting round").queue();
+            channel.sendMessage("All players bet. Starting round").queueAfter(1, TimeUnit.SECONDS);
             gameActions.setChannel(channel);
             gameActions.setPlayers(playerSet);
             gameActions.setUp();
