@@ -68,12 +68,12 @@ public class GameFlow extends ListenerAdapter {
         String input = event.getMessage().getContentRaw();
         TextChannel channel = event.getChannel();
         Player player = registeredPlayers.get(event.getAuthor().getId());
-        playState = playStateIGameActionMap.get(playState).handleInput(input, player, channel);
-        if (playState == PlayState.ROUND_OVER) {
-           // roundOver(channel);
-            playState = PlayState.CHOOSING_PLAYER;
-        }
+        // only "blackjack" should get triggered
+        IGameAction action = playStateIGameActionMap.get(playState);
 
+        if (action != null){
+            action.handleInput(input,player,channel);
+        }
 
     }
 
