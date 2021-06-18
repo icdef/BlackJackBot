@@ -107,6 +107,7 @@ public class GameFlow extends ListenerAdapter {
             }
             playState = PlayState.BETTING;
         }
+
         // pressing the bet amount
         if (input.equals("amount")){
             playState = new BettingButtonHandler(playerSet, gameActionsButton).handleInput(event.getButton().getLabel(),player,event);

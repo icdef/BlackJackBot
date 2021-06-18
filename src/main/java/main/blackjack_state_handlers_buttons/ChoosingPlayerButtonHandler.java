@@ -44,7 +44,7 @@ public class ChoosingPlayerButtonHandler implements IGameActionButton{
                                 Button.primary("quit","Bot goes into standby"))
                         .queue();
             }
-            event.getHook().editOriginal(("Press join to join or start or start")).completeAfter(1, TimeUnit.SECONDS);
+            event.getHook().editOriginal(("Press a button to continue")).completeAfter(1, TimeUnit.SECONDS);
         }
 
         if (input.equals("leave")) {
@@ -63,13 +63,13 @@ public class ChoosingPlayerButtonHandler implements IGameActionButton{
                                 Button.primary("quit","Bot goes into standby"))
                         .queue();
             }
-            event.getHook().editOriginal(("Press join to join or start or start")).completeAfter(1, TimeUnit.SECONDS);
+            event.getHook().editOriginal(("Press a button to continue")).completeAfter(1, TimeUnit.SECONDS);
         }
 
-        // initiates the bet state when at least one player joined the table
+
         if (input.equals("start")) {
             if (playerSet.isEmpty()) {
-                event.editMessage("Mo players have joined yet").
+                event.editMessage("No players have joined yet").
                         setActionRow(Button.primary("join","Click to join the game"),
                                 Button.primary("start","Click to start the round"),
                                 Button.primary("leave","Leave table"),
