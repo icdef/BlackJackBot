@@ -3,16 +3,17 @@ package main.util;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 public class ConfigReader {
 
-
+    private final String configFilePath =
+            Paths.get(System.getProperty("user.dir"), "src","main","resources","config.properties").toString();
 
     public String getToken(){
-        try {
+        try (FileInputStream inputStream = new FileInputStream(configFilePath)){
             Properties properties = new Properties();
-            FileInputStream inputStream = new FileInputStream("resources/config.properties");
             properties.load(inputStream);
             return properties.getProperty("token");
         } catch (IOException e) {
