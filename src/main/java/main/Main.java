@@ -8,6 +8,7 @@ import main.non_blackjack_commands.HelpCommandListener;
 import main.persistence_layer.IPlayerPersistent;
 import main.persistence_layer.PlayerPersistent;
 import main.registration.RegisterReactionListener;
+import main.util.ConfigReader;
 import main.util.EmbedMessageCreator;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -27,8 +28,9 @@ public class Main {
 
     public static void main(String[] args) throws LoginException, InterruptedException {
 
+        ConfigReader configReader = new ConfigReader();
         JDABuilder jdaBuilder =
-                JDABuilder.createDefault("");
+                JDABuilder.createDefault(configReader.getToken());
         JDA jda = jdaBuilder.build();
         jda.awaitReady();
         logger.info("Bot is on");
