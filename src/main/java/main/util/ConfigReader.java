@@ -8,8 +8,16 @@ import java.util.Properties;
 
 public class ConfigReader {
 
+
+    private static ConfigReader INSTANCE;
+
+    private ConfigReader(){
+
+    }
+
     private final String configFilePath =
             Paths.get(System.getProperty("user.dir"), "src","main","resources","config.properties").toString();
+
 
     public String getToken(){
         try (FileInputStream inputStream = new FileInputStream(configFilePath)){
@@ -20,5 +28,9 @@ public class ConfigReader {
             e.printStackTrace();
         }
         return "";
+    }
+
+    public static ConfigReader getInstance(){
+        return INSTANCE == null ? new ConfigReader() : INSTANCE;
     }
 }

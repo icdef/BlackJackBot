@@ -6,19 +6,21 @@ import main.playing_cards.DeckUtility;
 import main.playing_cards.Hand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.Button;
-import net.dv8tion.jda.api.interactions.components.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class GameActionsButton {
+
     private static final String BOT_TAG = "BlackJackBot#1745";
+    private static final Logger logger = LoggerFactory.getLogger(GameActionsButton.class);
     private final Player dealer = new Player("Dealer");
     private final Hand dealerHand = dealer.getCurrentHand();
     private final Deque<Player> playersInGame = new ArrayDeque<>();
@@ -55,8 +57,6 @@ public class GameActionsButton {
 
     /**
      * checks whether the active player is the same player as the one given in param
-     *
-     * @param player
      * @return true when the param player equals to active player. Otherwise false
      */
     public boolean isCommandFromCorrectPlayer(Player player) {
@@ -116,47 +116,18 @@ public class GameActionsButton {
     }
     /**
      * Creates embed of the current round. Active Player also have "active" next to his/her name
-     *
-     * @return MessageEmbed with all the info of the current round together with the info of who is the active player
      */
-    private Message printCurrentGameWithActivePlayer(boolean activeButtons) {
-
+    private void printCurrentGameAsDealer() {
+        if (!event.isAcknowledged()){
+            event.deferEdit().queue();
+        }
         MessageEmbed messageEmbed = createCurrentRoundEmbed();
-        List<Button> buttons = new ArrayList<>();
-        if (activeButtons) {
-            Button doubleButton = Button.primary("double", "double");
-            if (!allowedToDouble()) {
-                doubleButton = doubleButton.withDisabled(true);
-            }
-            Button splitButton = Button.primary("split", "split");
-            if (!allowedToSplit()) {
-                splitButton = splitButton.withDisabled(true);
-            }
-            Button hitButton = Button.primary("hit", "hit");
-            Button standButton = Button.primary("stand", "stand");
-
-            buttons.add(doubleButton);
-            buttons.add(splitButton);
-            buttons.add(hitButton);
-            buttons.add(standButton);
-        }
-        else {
-            Button doubleButton = Button.primary("double", "double").asDisabled();
-            Button splitButton = Button.primary("split", "split").asDisabled();
-            Button hitButton = Button.primary("hit", "hit").asDisabled();
-            Button standButton = Button.primary("stand", "stand").asDisabled();
-            buttons.add(doubleButton);
-            buttons.add(splitButton);
-            buttons.add(hitButton);
-            buttons.add(standButton);
-        }
-
-        return event.getHook().editOriginalEmbeds(messageEmbed).setActionRow(buttons).completeAfter(1, TimeUnit.SECONDS);
+        event.getHook().editOriginalEmbeds(messageEmbed).setActionRows().completeAfter(1, TimeUnit.SECONDS);
     }
-    private void printCurrentGameAsAcknowledgmentEvent(boolean activeButtons){
+    private void printCurrentGameAsAcknowledgmentEvent(){
         MessageEmbed messageEmbed = createCurrentRoundEmbed();
         List<Button> buttons = new ArrayList<>();
-        if (activeButtons) {
+
             Button doubleButton = Button.primary("double", "double");
             if (!allowedToDouble()) {
                 doubleButton = doubleButton.withDisabled(true);
@@ -172,17 +143,6 @@ public class GameActionsButton {
             buttons.add(splitButton);
             buttons.add(hitButton);
             buttons.add(standButton);
-        }
-        else {
-            Button doubleButton = Button.primary("double", "double").asDisabled();
-            Button splitButton = Button.primary("split", "split").asDisabled();
-            Button hitButton = Button.primary("hit", "hit").asDisabled();
-            Button standButton = Button.primary("stand", "stand").asDisabled();
-            buttons.add(doubleButton);
-            buttons.add(splitButton);
-            buttons.add(hitButton);
-            buttons.add(standButton);
-        }
         event.editMessageEmbeds(messageEmbed).setActionRow(buttons).complete();
     }
 
@@ -212,13 +172,15 @@ public class GameActionsButton {
             player.getCurrentHand().addCardToHand(deck.pop());
         }
 
-/*        // for debugging
+        // for debugging
+/*
         Player[] playerTestArray = players.toArray(new Player[0]);
-        Hand playerhand = playerTestArray[0].getCurrentHand();
-        playerhand.removeACardFromHand();
-        playerhand.removeACardFromHand();
-        playerhand.addCardToHand(new Card(10, "K"));
-        playerhand.addCardToHand(new Card(10, "K"));*/
+        Hand playerHand = playerTestArray[0].getCurrentHand();
+        playerHand.removeACardFromHand();
+        playerHand.removeACardFromHand();
+        playerHand.addCardToHand(new Card(10, "K"));
+        playerHand.addCardToHand(new Card(11, "A"));
+*/
 
 
         playersInGame.push(dealer);
@@ -269,6 +231,9 @@ public class GameActionsButton {
         if (activePlayer != dealer) {
             throw new IllegalStateException("Active Player should be dealer right now");
         }
+        if (allHadBlackjack){
+            printCurrentGameAsDealer();
+        }
         Hand activePlayerCurrentHand = activePlayer.getCurrentHand();
         while (activePlayerCurrentHand.getCurrentHandValue() < 17) {
             try {
@@ -282,18 +247,18 @@ public class GameActionsButton {
                 if (activePlayerCurrentHand.getCurrentHandValue() > 21) {
                     activePlayerCurrentHand.setBusted(true);
                 }
-                printCurrentGameWithActivePlayer(false);
+                printCurrentGameAsDealer();
 
                 // everyone already won or lost
                 if (allHadBlackjack || nrOfBustedPlayers == (splitPlayers.size() + players.size())) {
                     Thread.sleep(500);
-                    printCurrentGameWithActivePlayer(false);
+                    printCurrentGameAsDealer();
                     return;
                 }
 
                 Thread.sleep(500);
             } catch (InterruptedException e) {
-                System.out.println("Dealer got interrupted");
+                logger.error("Dealer got interrupted");
                 Thread.currentThread().interrupt();
             }
         }
@@ -337,11 +302,11 @@ public class GameActionsButton {
         }
 
         if (activePlayer == dealer) {
-            printCurrentGameAsAcknowledgmentEvent(false);
+            printCurrentGameAsDealer();
             dealerPlay();
             return true;
         }
-        printCurrentGameAsAcknowledgmentEvent(true);
+        printCurrentGameAsAcknowledgmentEvent();
         return false;
     }
 
@@ -353,11 +318,11 @@ public class GameActionsButton {
     public boolean stand() {
         nextPlayersTurn();
         if (activePlayer == dealer) {
-            printCurrentGameAsAcknowledgmentEvent(false);
+            printCurrentGameAsDealer();
             dealerPlay();
             return true;
         }
-        printCurrentGameAsAcknowledgmentEvent(true);
+        printCurrentGameAsAcknowledgmentEvent();
         return false;
     }
 
@@ -386,11 +351,11 @@ public class GameActionsButton {
         }
         nextPlayersTurn();
         if (activePlayer == dealer) {
-            printCurrentGameAsAcknowledgmentEvent(false);
+            printCurrentGameAsDealer();
             dealerPlay();
             return true;
         }
-        printCurrentGameAsAcknowledgmentEvent(true);
+        printCurrentGameAsAcknowledgmentEvent();
         return false;
     }
 
@@ -421,7 +386,7 @@ public class GameActionsButton {
             activePlayerCurrentHand.setBlackJack(true);
             nextPlayersTurn();
         }
-        printCurrentGameAsAcknowledgmentEvent(true);
+        printCurrentGameAsAcknowledgmentEvent();
     }
 
     /**

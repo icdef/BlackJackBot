@@ -5,11 +5,11 @@ import main.game_control_files.GameActionsButton;
 import main.game_control_files.PlayState;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 
-public class PlayingButtonHandler implements IGameActionButton{
+public class PlayingButtonHandlerHandler implements IGameActionButtonHandler {
 
     private final GameActionsButton gameActions;
 
-    public PlayingButtonHandler(GameActionsButton gameActions) {
+    public PlayingButtonHandlerHandler(GameActionsButton gameActions) {
         this.gameActions = gameActions;
     }
 
@@ -31,7 +31,7 @@ public class PlayingButtonHandler implements IGameActionButton{
                 }
         }
         if (gameActions.isCommandFromCorrectPlayer(player) && input.equals("split")) {
-                gameActions.split();
+            gameActions.split();
         }
 
         return PlayState.PLAYING;

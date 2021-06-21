@@ -29,15 +29,17 @@ public class ClearCommandListener extends ListenerAdapter {
         if (input.equals("clear") &&
                 (playState == PlayState.NOT_PLAYING || playState == PlayState.CHOOSING_PLAYER)) {
             TextChannel channel = event.getChannel();
-            channel.sendMessage("Bot is working, please wait...").complete();
             MessageHistory history = new MessageHistory(channel);
+            channel.sendMessage("Bot is working, please wait...").complete();
             history.retrievePast(100).complete();
-            while (!history.getRetrievedHistory().isEmpty()) {
+            while (history.getRetrievedHistory().size() > 1) {
                 channel.deleteMessages(history.getRetrievedHistory()).complete();
+                channel.sendMessage("Bot is working, please wait...").complete();
                 history = new MessageHistory(channel);
                 history.retrievePast(100).complete();
             }
-
+            // last Bot is working message needs to be deleted as well
+            channel.deleteMessageById(history.getRetrievedHistory().get(0).getId()).queue();
             channel.sendMessage("Messages deleted")
                     .queueAfter(1, TimeUnit.SECONDS, m -> m.delete().queueAfter(500, TimeUnit.MILLISECONDS));
         }

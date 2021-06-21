@@ -2,10 +2,13 @@ package main.game_control_files;
 
 import main.Main;
 import main.Player;
-import main.blackjack_state_handlers.*;
-import main.blackjack_state_handlers_buttons.BettingButtonHandler;
-import main.blackjack_state_handlers_buttons.ChoosingPlayerButtonHandler;
-import main.blackjack_state_handlers_buttons.PlayingButtonHandler;
+import main.blackjack_state_handlers.Betting;
+import main.blackjack_state_handlers.IGameAction;
+import main.blackjack_state_handlers.NotPlaying;
+import main.blackjack_state_handlers_buttons.ChoosingPlayerButtonHandlerHandler;
+import main.blackjack_state_handlers_buttons.IGameActionButtonHandler;
+import main.blackjack_state_handlers_buttons.PlayingButtonHandlerHandler;
+import main.blackjack_state_handlers_buttons.AllBetButtonHandler;
 import main.persistence_layer.IPlayerPersistent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -26,34 +29,38 @@ public class GameFlow extends ListenerAdapter {
 
     private final Set<Player> playerSet;
     private final NumberFormat nf = new DecimalFormat("##.###");
-    private final GameActions gameActions;
     private final GameActionsButton gameActionsButton;
     private final JDA jda;
     private final EnumMap<PlayState, IGameAction> playStateIGameActionMap =
+            new EnumMap<>(PlayState.class);
+    private final EnumMap<PlayState, IGameActionButtonHandler> playStateIGameActionButtonMap =
             new EnumMap<>(PlayState.class);
     private final Map<String, Player> registeredPlayers;
     private PlayState playState;
 
     public GameFlow(PlayState playState, Set<Player> playerSet, IPlayerPersistent playerPersistent,
-                    GameActions gameActions, JDA jda) {
+                    JDA jda) {
         this.playState = playState;
         this.playerSet = playerSet;
-        this.gameActions = gameActions;
         this.jda = jda;
         this.registeredPlayers = playerPersistent.readAlreadyRegisteredPlayers();
         this.gameActionsButton = new GameActionsButton(jda);
-        initializingMap();
+        initializingMaps();
     }
 
-    private void initializingMap() {
+    private void initializingMaps() {
         IGameAction notPlaying = new NotPlaying();
-       // IGameAction choosingPlayer = new ChoosingPlayer(playerSet);
-       // IGameAction betting = new Betting(playerSet, gameActions);
-       // IGameAction playing = new Playing(gameActions);
+        IGameAction betting = new Betting(playerSet);
         playStateIGameActionMap.put(PlayState.NOT_PLAYING, notPlaying);
-       // playStateIGameActionMap.put(PlayState.CHOOSING_PLAYER, choosingPlayer);
-       // playStateIGameActionMap.put(PlayState.BETTING, betting);
-       // playStateIGameActionMap.put(PlayState.PLAYING, playing);
+        playStateIGameActionMap.put(PlayState.BETTING, betting);
+
+        IGameActionButtonHandler choosingPlayer = new ChoosingPlayerButtonHandlerHandler(playerSet);
+        IGameActionButtonHandler playing = new PlayingButtonHandlerHandler(gameActionsButton);
+        IGameActionButtonHandler allBet = new AllBetButtonHandler(playerSet,gameActionsButton);
+        playStateIGameActionButtonMap.put(PlayState.CHOOSING_PLAYER,choosingPlayer);
+        playStateIGameActionButtonMap.put(PlayState.PLAYING,playing);
+        playStateIGameActionButtonMap.put(PlayState.ALL_BETS_IN,allBet);
+
     }
 
 
@@ -68,10 +75,11 @@ public class GameFlow extends ListenerAdapter {
         String input = event.getMessage().getContentRaw();
         TextChannel channel = event.getChannel();
         Player player = registeredPlayers.get(event.getAuthor().getId());
+        IGameAction action = playStateIGameActionMap.get(playState);
+        if (action != null) {
+            playState = action.handleInput(input, player, channel);
 
-
-        IGameAction action = new NotPlaying();
-        action.handleInput(input,player,channel);
+        }
 
 
     }
@@ -82,46 +90,13 @@ public class GameFlow extends ListenerAdapter {
         TextChannel channel = event.getTextChannel();
         Player player = registeredPlayers.get(event.getUser().getId());
         gameActionsButton.setEvent(event);
-        if (input.equals("join") || input.equals("start") || input.equals("quit") || input.equals("leave")){
-            playState = new ChoosingPlayerButtonHandler(playerSet).handleInput(input,player,event);
-        }
-
-        if (input.equals("plus")){
-            int currentBetAmount = Integer.parseInt(event.getMessage().getButtonById("amount").getLabel());
-            String newLabel = ""+(currentBetAmount+50);
-            event.getInteraction().editMessage("Enter bet")
-                    .setActionRow(Button.primary("minus","-"),Button.success("amount",newLabel),Button.primary("plus","+")).queue();
-            playState = PlayState.BETTING;
-        }
-        if (input.equals("minus")){
-            int currentBetAmount = Integer.parseInt(event.getMessage().getButtonById("amount").getLabel());
-            String newLabel = "" + (currentBetAmount - 50);
-            if (currentBetAmount-50 <= 0){
-                event.getInteraction().editMessage("Enter bet")
-                        .setActionRow(Button.primary("minus", "-").asDisabled(), Button.success("amount",newLabel).asDisabled(),Button.primary("plus","+")).queue();
-            }
-            else {
-                event.getInteraction().editMessage("Enter bet")
-                        .setActionRow(Button.primary("minus", "-"), Button.success("amount", newLabel), Button.primary("plus", "+")).queue();
-            }
-            playState = PlayState.BETTING;
-        }
-
-        // pressing the bet amount
-        if (input.equals("amount")){
-            playState = new BettingButtonHandler(playerSet, gameActionsButton).handleInput(event.getButton().getLabel(),player,event);
+        IGameActionButtonHandler buttonAction = playStateIGameActionButtonMap.get(playState);
+        if (buttonAction != null) {
+            playState = buttonAction.handleInput(input,player,event);
             if (playState == PlayState.ROUND_OVER){
                 playState = roundOver(channel);
             }
         }
-
-        if (playState == PlayState.PLAYING){
-            playState = new PlayingButtonHandler(gameActionsButton).handleInput(input,player,event);
-            if (playState == PlayState.ROUND_OVER){
-                playState = roundOver(channel);
-            }
-        }
-
 
     }
 

@@ -6,7 +6,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 
 
-public interface IGameActionButton {
+public interface IGameActionButtonHandler {
 
     PlayState handleInput(String input, Player player, ButtonClickEvent event);
 }

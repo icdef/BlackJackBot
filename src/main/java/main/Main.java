@@ -1,6 +1,5 @@
 package main;
 
-import main.game_control_files.GameActions;
 import main.game_control_files.GameFlow;
 import main.game_control_files.PlayState;
 import main.non_blackjack_commands.ClearCommandListener;
@@ -28,7 +27,7 @@ public class Main {
 
     public static void main(String[] args) throws LoginException, InterruptedException {
 
-        ConfigReader configReader = new ConfigReader();
+        ConfigReader configReader = ConfigReader.getInstance();
         JDABuilder jdaBuilder =
                 JDABuilder.createDefault(configReader.getToken());
         JDA jda = jdaBuilder.build();
@@ -45,10 +44,9 @@ public class Main {
 
         Set<Player> playerSet = new HashSet<>();
         PlayState playState = PlayState.NOT_PLAYING;
-        GameActions gameActions = new GameActions(jda);
 
         jda.addEventListener(new RegisterReactionListener(playerPersistent),
-                new GameFlow(playState, playerSet, playerPersistent, gameActions, jda),
+                new GameFlow(playState, playerSet, playerPersistent,jda),
                 new HelpCommandListener(), new ClearCommandListener(playState));
 
 
