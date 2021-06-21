@@ -1,28 +1,24 @@
-package main.blackjack_state_handlers;
+package main.blackjack_state_handlers_button;
 
 import main.Player;
-import main.game_control_files.GameActions;
+import main.game_control_files.GameActionsButton;
 import main.game_control_files.PlayState;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 
-public class Playing implements IGameAction {
+public class PlayingButtonHandlerHandler implements IGameActionButtonHandler {
 
+    private final GameActionsButton gameActions;
 
-    private final GameActions gameActions;
-
-
-    public Playing(GameActions gameActions) {
+    public PlayingButtonHandlerHandler(GameActionsButton gameActions) {
         this.gameActions = gameActions;
-
     }
 
     @Override
-    public PlayState handleInput(String input, Player player, TextChannel channel) {
+    public PlayState handleInput(String input, Player player, ButtonClickEvent event) {
         if (gameActions.isCommandFromCorrectPlayer(player) && input.equals("hit")) {
             if (gameActions.hit()) {
                 return PlayState.ROUND_OVER;
             }
-
         }
         if (gameActions.isCommandFromCorrectPlayer(player) && input.equals("stand")) {
             if (gameActions.stand()) {
@@ -30,21 +26,15 @@ public class Playing implements IGameAction {
             }
         }
         if (gameActions.isCommandFromCorrectPlayer(player) && input.equals("double")) {
-            if (gameActions.allowedToDouble()) {
                 if (gameActions.doubleMove()) {
                     return PlayState.ROUND_OVER;
                 }
-            } else {
-                channel.sendMessage("You are not allowed to double").queue();
-            }
         }
         if (gameActions.isCommandFromCorrectPlayer(player) && input.equals("split")) {
-            if (gameActions.allowedToSplit()) {
-                gameActions.split();
-            } else {
-                channel.sendMessage("You are not allowed to split").queue();
-            }
+            gameActions.split();
         }
+
         return PlayState.PLAYING;
     }
+
 }

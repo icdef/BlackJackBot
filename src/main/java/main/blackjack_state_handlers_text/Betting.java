@@ -1,9 +1,9 @@
-package main.blackjack_state_handlers;
+package main.blackjack_state_handlers_text;
 
 import main.Player;
-import main.game_control_files.GameActions;
 import main.game_control_files.PlayState;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.interactions.components.Button;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -13,12 +13,10 @@ public class Betting implements IGameAction {
 
     private final NumberFormat nf = new DecimalFormat("##.###");
     private final Set<Player> playerSet;
-    private final GameActions gameActions;
 
 
-    public Betting(Set<Player> playerSet, GameActions gameActions) {
+    public Betting(Set<Player> playerSet) {
         this.playerSet = playerSet;
-        this.gameActions = gameActions;
 
     }
 
@@ -38,14 +36,9 @@ public class Betting implements IGameAction {
 
     @Override
     public PlayState handleInput(String input, Player player, TextChannel channel) {
-        String[] inputSplitted = input.split(" ");
-        if (inputSplitted.length != 2) {
-            channel.sendMessage("Need to enter: bet <amount>").queue();
-            return PlayState.BETTING;
-        }
         if (player != null && playerSet.contains(player)) {
             try {
-                double bet = Double.parseDouble(inputSplitted[1]);
+                double bet = Double.parseDouble(input);
                 if (bet > player.getMoney()) {
                     channel.sendMessage("You do not have enough money for that bet").queue();
                 } else if (bet > 0) {
@@ -64,14 +57,9 @@ public class Betting implements IGameAction {
         }
 
         if (didAllPlayersBet()) {
-            channel.sendMessage("All players bet. Starting round").queue();
-            gameActions.setChannel(channel);
-            gameActions.setPlayers(playerSet);
-            gameActions.setUp();
-            if (gameActions.doAllPlayersHaveBlackJack()) {
-                return PlayState.ROUND_OVER;
-            }
-            return PlayState.PLAYING;
+           channel.sendMessage("All players entered their bet. You can change your bet or press the button to start").
+                   setActionRow(Button.primary("roundStart","start")).queue();
+           return PlayState.ALL_BETS_IN;
 
         }
         return PlayState.BETTING;

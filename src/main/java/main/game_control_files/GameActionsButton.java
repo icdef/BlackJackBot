@@ -6,37 +6,43 @@ import main.playing_cards.DeckUtility;
 import main.playing_cards.Hand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.Button;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.util.*;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-public class GameActions {
+public class GameActionsButton {
+
     private static final String BOT_TAG = "BlackJackBot#1745";
+    private static final Logger logger = LoggerFactory.getLogger(GameActionsButton.class);
     private final Player dealer = new Player("Dealer");
     private final Hand dealerHand = dealer.getCurrentHand();
     private final Deque<Player> playersInGame = new ArrayDeque<>();
     private final JDA jda;
     private Set<Player> players;
     private final Map<Player, Player> splitPlayers = new HashMap<>();
-    private TextChannel channel;
     private Deque<Card> deck;
     private Player activePlayer;
     private boolean allHadBlackjack = false;
     private int nrOfBustedPlayers = 0;
+    private ButtonClickEvent event;
 
-    public GameActions(JDA jda) {
+    public GameActionsButton(JDA jda) {
         this.jda = jda;
+    }
+
+    public void setEvent(ButtonClickEvent event) {
+        this.event = event;
     }
 
     public void setPlayers(Set<Player> players) {
         this.players = players;
-    }
-
-    public void setChannel(TextChannel channel) {
-        this.channel = channel;
     }
 
 
@@ -51,8 +57,6 @@ public class GameActions {
 
     /**
      * checks whether the active player is the same player as the one given in param
-     *
-     * @param player
      * @return true when the param player equals to active player. Otherwise false
      */
     public boolean isCommandFromCorrectPlayer(Player player) {
@@ -76,7 +80,6 @@ public class GameActions {
                 false);
         for (Player p : players) {
             builder.addField(addActiveToNameWhenActivePlayer(p), p.getCurrentHand().toString(), false);
-            builder.setColor(Color.black);
             Player splitPlayer = splitPlayers.get(p);
             if (splitPlayer != null) {
                 builder.addField(addActiveToNameWhenActivePlayer(splitPlayer),
@@ -91,33 +94,56 @@ public class GameActions {
         return player == activePlayer ? player.getNameNoTag() + " active" : player.getNameNoTag();
     }
 
+
+    private ActionRow currentGameButtons(){
+        List<Button> buttons = new ArrayList<>();
+            Button doubleButton = Button.primary("double", "double");
+            if (!allowedToDouble()) {
+                doubleButton = doubleButton.withDisabled(true);
+            }
+            Button splitButton = Button.primary("split", "split");
+            if (!allowedToSplit()) {
+                splitButton = splitButton.withDisabled(true);
+            }
+            Button hitButton = Button.primary("hit", "hit");
+            Button standButton = Button.primary("stand", "stand");
+
+            buttons.add(doubleButton);
+            buttons.add(splitButton);
+            buttons.add(hitButton);
+            buttons.add(standButton);
+            return ActionRow.of(buttons);
+    }
     /**
      * Creates embed of the current round. Active Player also have "active" next to his/her name
-     *
-     * @return MessageEmbed with all the info of the current round together with the info of who is the active player
      */
-    private Message printCurrentGameWithActivePlayer() {
-        EmbedBuilder builder = new EmbedBuilder();
-        builder.setTitle("Current Table");
-        builder.setAuthor(jda.getUserByTag(BOT_TAG).getName(), null,
-                jda.getUserByTag(BOT_TAG).getAvatarUrl());
-        if (activePlayer != dealer) {
-            String split = allowedToSplit() ? ", split" : "";
-            String doubleAble = allowedToDouble() ? ", double" : "";
-            String fieldValue = "hit, stand" + split + doubleAble;
-            builder.addField("Possible moves", fieldValue, false);
+    private void printCurrentGameAsDealer() {
+        if (!event.isAcknowledged()){
+            event.deferEdit().queue();
         }
-        builder.addField(addActiveToNameWhenActivePlayer(dealer), dealer.getCurrentHand().toString(),
-                false);
-        for (Player p : players) {
-            builder.addField(addActiveToNameWhenActivePlayer(p), p.getCurrentHand().toString(), false);
-            Player splitPlayer = splitPlayers.get(p);
-            if (splitPlayer != null) {
-                builder.addField(addActiveToNameWhenActivePlayer(splitPlayer),
-                        splitPlayer.getCurrentHand().toString(), false);
+        MessageEmbed messageEmbed = createCurrentRoundEmbed();
+        event.getHook().editOriginalEmbeds(messageEmbed).setActionRows().completeAfter(1, TimeUnit.SECONDS);
+    }
+    private void printCurrentGameAsAcknowledgmentEvent(){
+        MessageEmbed messageEmbed = createCurrentRoundEmbed();
+        List<Button> buttons = new ArrayList<>();
+
+            Button doubleButton = Button.primary("double", "double");
+            if (!allowedToDouble()) {
+                doubleButton = doubleButton.withDisabled(true);
             }
-        }
-        return channel.sendMessageEmbeds(builder.build()).complete();
+            Button splitButton = Button.primary("split", "split");
+            if (!allowedToSplit()) {
+                splitButton = splitButton.withDisabled(true);
+            }
+            Button hitButton = Button.primary("hit", "hit");
+            Button standButton = Button.primary("stand", "stand");
+
+            buttons.add(doubleButton);
+            buttons.add(splitButton);
+            buttons.add(hitButton);
+            buttons.add(standButton);
+        event.editMessageEmbeds(messageEmbed).setActionRow(buttons).complete();
     }
 
     /**
@@ -147,12 +173,14 @@ public class GameActions {
         }
 
         // for debugging
-/*        Player[] playerTestArray = players.toArray(new Player[0]);
-        Hand playerhand = playerTestArray[0].getCurrentHand();
-        playerhand.removeACardFromHand();
-        playerhand.removeACardFromHand();
-        playerhand.addCardToHand(new Card(10, "K"));
-        playerhand.addCardToHand(new Card(10, "K"));*/
+/*
+        Player[] playerTestArray = players.toArray(new Player[0]);
+        Hand playerHand = playerTestArray[0].getCurrentHand();
+        playerHand.removeACardFromHand();
+        playerHand.removeACardFromHand();
+        playerHand.addCardToHand(new Card(10, "K"));
+        playerHand.addCardToHand(new Card(11, "A"));
+*/
 
 
         playersInGame.push(dealer);
@@ -185,51 +213,59 @@ public class GameActions {
         if (nrOfBlackjacks == players.size()) {
             allHadBlackjack = true;
         }
-        Message message = printCurrentGameWithActivePlayer();
+
         if (activePlayer == dealer) {
-            dealerPlay(message);
+            dealerPlay();
             return true;
         }
+        event.getHook().editOriginal("").setEmbeds(createCurrentRoundEmbed()).setActionRows(currentGameButtons()).complete();
         return false;
     }
 
     /**
      * dealer plays till he gets 17 or higher. Should only be called when the activePlayer is the dealer.
-     *
-     * @param message embed which describes the current round.
      * @throws IllegalStateException when function is not called with dealer as active player
      */
 
-    public void dealerPlay(Message message) {
+    public void dealerPlay() {
         if (activePlayer != dealer) {
             throw new IllegalStateException("Active Player should be dealer right now");
+        }
+        if (allHadBlackjack){
+            printCurrentGameAsDealer();
         }
         Hand activePlayerCurrentHand = activePlayer.getCurrentHand();
         while (activePlayerCurrentHand.getCurrentHandValue() < 17) {
             try {
                 activePlayerCurrentHand.addCardToHand(deck.pop());
+
                 if (activePlayerCurrentHand.getHandSize() == 2 &&
                         activePlayerCurrentHand.getCurrentHandValue() == 21) {
                     activePlayerCurrentHand.setBlackJack(true);
                 }
-                // everyone already won or lost
-                if (allHadBlackjack || nrOfBustedPlayers == (splitPlayers.size() + players.size())) {
-                    return;
-                }
+
                 if (activePlayerCurrentHand.getCurrentHandValue() > 21) {
                     activePlayerCurrentHand.setBusted(true);
-                    nrOfBustedPlayers++;
                 }
-                message.editMessageEmbeds(createCurrentRoundEmbed()).complete();
+                printCurrentGameAsDealer();
+
+                // everyone already won or lost
+                if (allHadBlackjack || nrOfBustedPlayers == (splitPlayers.size() + players.size())) {
+                    Thread.sleep(500);
+                    printCurrentGameAsDealer();
+                    return;
+                }
+
                 Thread.sleep(500);
             } catch (InterruptedException e) {
-                System.out.println("Dealer got interrupted");
+                logger.error("Dealer got interrupted");
                 Thread.currentThread().interrupt();
             }
         }
 
 
     }
+
 
     /**
      * next players turn. when next player has black jack recursively goes to next player till its dealer's turn
@@ -264,11 +300,13 @@ public class GameActions {
         } else if (activePlayerCurrentHand.getCurrentHandValue() == 21) {
             activePlayer = playersInGame.pop();
         }
-        Message message = printCurrentGameWithActivePlayer();
+
         if (activePlayer == dealer) {
-            dealerPlay(message);
+            printCurrentGameAsDealer();
+            dealerPlay();
             return true;
         }
+        printCurrentGameAsAcknowledgmentEvent();
         return false;
     }
 
@@ -279,11 +317,12 @@ public class GameActions {
      */
     public boolean stand() {
         nextPlayersTurn();
-        Message message = printCurrentGameWithActivePlayer();
         if (activePlayer == dealer) {
-            dealerPlay(message);
+            printCurrentGameAsDealer();
+            dealerPlay();
             return true;
         }
+        printCurrentGameAsAcknowledgmentEvent();
         return false;
     }
 
@@ -311,11 +350,12 @@ public class GameActions {
             nrOfBustedPlayers++;
         }
         nextPlayersTurn();
-        Message message = printCurrentGameWithActivePlayer();
         if (activePlayer == dealer) {
-            dealerPlay(message);
+            printCurrentGameAsDealer();
+            dealerPlay();
             return true;
         }
+        printCurrentGameAsAcknowledgmentEvent();
         return false;
     }
 
@@ -346,7 +386,7 @@ public class GameActions {
             activePlayerCurrentHand.setBlackJack(true);
             nextPlayersTurn();
         }
-        printCurrentGameWithActivePlayer();
+        printCurrentGameAsAcknowledgmentEvent();
     }
 
     /**

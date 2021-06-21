@@ -1,6 +1,5 @@
 package main;
 
-import main.game_control_files.GameActions;
 import main.game_control_files.GameFlow;
 import main.game_control_files.PlayState;
 import main.non_blackjack_commands.ClearCommandListener;
@@ -8,7 +7,8 @@ import main.non_blackjack_commands.HelpCommandListener;
 import main.persistence_layer.IPlayerPersistent;
 import main.persistence_layer.PlayerPersistent;
 import main.registration.RegisterReactionListener;
-import main.util.EmbedMessageCreator;
+import main.util.ConfigReader;
+import main.registration.EmbedMessageCreatorRegistration;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 
@@ -27,26 +27,26 @@ public class Main {
 
     public static void main(String[] args) throws LoginException, InterruptedException {
 
+        ConfigReader configReader = ConfigReader.getInstance();
         JDABuilder jdaBuilder =
-                JDABuilder.createDefault("");
+                JDABuilder.createDefault(configReader.getToken());
         JDA jda = jdaBuilder.build();
         jda.awaitReady();
         logger.info("Bot is on");
 
 
         IPlayerPersistent playerPersistent = new PlayerPersistent(jda);
-        EmbedMessageCreator embedMessageCreator = new EmbedMessageCreator(jda);
-        embedMessageCreator.createRegisterEmbedIfNeeded();
+        EmbedMessageCreatorRegistration embedMessageCreatorRegistration = new EmbedMessageCreatorRegistration(jda);
+        embedMessageCreatorRegistration.createRegisterEmbedIfNeeded();
 
         Thread t1 = new Thread(new Shut(jda, playerPersistent));
         t1.start();
 
         Set<Player> playerSet = new HashSet<>();
         PlayState playState = PlayState.NOT_PLAYING;
-        GameActions gameActions = new GameActions(jda);
 
         jda.addEventListener(new RegisterReactionListener(playerPersistent),
-                new GameFlow(playState, playerSet, playerPersistent, gameActions, jda),
+                new GameFlow(playState, playerSet, playerPersistent,jda),
                 new HelpCommandListener(), new ClearCommandListener(playState));
 
 

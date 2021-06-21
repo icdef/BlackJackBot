@@ -2,13 +2,21 @@ package main.game_control_files;
 
 import main.Main;
 import main.Player;
-import main.blackjack_state_handlers.*;
+import main.blackjack_state_handlers_text.Betting;
+import main.blackjack_state_handlers_text.IGameAction;
+import main.blackjack_state_handlers_text.NotPlaying;
+import main.blackjack_state_handlers_button.ChoosingPlayerButtonHandlerHandler;
+import main.blackjack_state_handlers_button.IGameActionButtonHandler;
+import main.blackjack_state_handlers_button.PlayingButtonHandlerHandler;
+import main.blackjack_state_handlers_button.AllBetButtonHandler;
 import main.persistence_layer.IPlayerPersistent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.components.Button;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
@@ -21,32 +29,38 @@ public class GameFlow extends ListenerAdapter {
 
     private final Set<Player> playerSet;
     private final NumberFormat nf = new DecimalFormat("##.###");
-    private final GameActions gameActions;
+    private final GameActionsButton gameActionsButton;
     private final JDA jda;
     private final EnumMap<PlayState, IGameAction> playStateIGameActionMap =
+            new EnumMap<>(PlayState.class);
+    private final EnumMap<PlayState, IGameActionButtonHandler> playStateIGameActionButtonMap =
             new EnumMap<>(PlayState.class);
     private final Map<String, Player> registeredPlayers;
     private PlayState playState;
 
     public GameFlow(PlayState playState, Set<Player> playerSet, IPlayerPersistent playerPersistent,
-                    GameActions gameActions, JDA jda) {
+                    JDA jda) {
         this.playState = playState;
         this.playerSet = playerSet;
-        this.gameActions = gameActions;
         this.jda = jda;
         this.registeredPlayers = playerPersistent.readAlreadyRegisteredPlayers();
-        initializingMap();
+        this.gameActionsButton = new GameActionsButton(jda);
+        initializingMaps();
     }
 
-    private void initializingMap() {
+    private void initializingMaps() {
         IGameAction notPlaying = new NotPlaying();
-        IGameAction choosingPlayer = new ChoosingPlayer(playerSet);
-        IGameAction betting = new Betting(playerSet, gameActions);
-        IGameAction playing = new Playing(gameActions);
+        IGameAction betting = new Betting(playerSet);
         playStateIGameActionMap.put(PlayState.NOT_PLAYING, notPlaying);
-        playStateIGameActionMap.put(PlayState.CHOOSING_PLAYER, choosingPlayer);
         playStateIGameActionMap.put(PlayState.BETTING, betting);
-        playStateIGameActionMap.put(PlayState.PLAYING, playing);
+
+        IGameActionButtonHandler choosingPlayer = new ChoosingPlayerButtonHandlerHandler(playerSet);
+        IGameActionButtonHandler playing = new PlayingButtonHandlerHandler(gameActionsButton);
+        IGameActionButtonHandler allBet = new AllBetButtonHandler(playerSet,gameActionsButton);
+        playStateIGameActionButtonMap.put(PlayState.CHOOSING_PLAYER,choosingPlayer);
+        playStateIGameActionButtonMap.put(PlayState.PLAYING,playing);
+        playStateIGameActionButtonMap.put(PlayState.ALL_BETS_IN,allBet);
+
     }
 
 
@@ -61,28 +75,43 @@ public class GameFlow extends ListenerAdapter {
         String input = event.getMessage().getContentRaw();
         TextChannel channel = event.getChannel();
         Player player = registeredPlayers.get(event.getAuthor().getId());
-        playState = playStateIGameActionMap.get(playState).handleInput(input, player, channel);
-        if (playState == PlayState.ROUND_OVER) {
-            roundOver(channel);
-            playState = PlayState.CHOOSING_PLAYER;
+        IGameAction action = playStateIGameActionMap.get(playState);
+        if (action != null) {
+            playState = action.handleInput(input, player, channel);
+
         }
 
+
+    }
+
+    @Override
+    public void onButtonClick(@NotNull ButtonClickEvent event) {
+        String input = event.getButton().getId();
+        TextChannel channel = event.getTextChannel();
+        Player player = registeredPlayers.get(event.getUser().getId());
+        gameActionsButton.setEvent(event);
+        IGameActionButtonHandler buttonAction = playStateIGameActionButtonMap.get(playState);
+        if (buttonAction != null) {
+            playState = buttonAction.handleInput(input,player,event);
+            if (playState == PlayState.ROUND_OVER){
+                playState = roundOver(channel);
+            }
+        }
 
     }
 
     /**
      * gets called when the round is over. Prints the Win/Losses of all players in an embed. Afterwards resets the players.
      *
-     * @param channel textchannel where the game is printed to
-     * @return Playstate choosing player
+     * @return PlayState choosing player
      */
-    public PlayState roundOver(TextChannel channel) {
+    private PlayState roundOver(TextChannel channel) {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setAuthor(jda.getUserByTag("BlackJackBot#1745").getName(), null,
                 jda.getUserByTag("BlackJackBot#1745").getAvatarUrl());
         builder.setTitle("ROUND OVER");
 
-        gameActions.calculatePayout();
+        gameActionsButton.calculatePayout();
         for (Player p : playerSet) {
             String fieldName =
                     p.getNameNoTag() + (p.getWonAmount() > 0 ? " won $" + nf.format(p.getWonAmount()) :
@@ -91,7 +120,17 @@ public class GameFlow extends ListenerAdapter {
         }
         builder.setFooter("Players can join and leave or start the next round");
         channel.sendMessageEmbeds(builder.build()).queue();
-        gameActions.resetPlayers();
+
+        gameActionsButton.resetPlayers();
+
+        channel.sendMessage(
+                "BlackJack game started. Press join to join or start or start").
+                setActionRow(Button.primary("join","Click to join the game"),
+                Button.primary("start","Click to start the round"),
+                Button.primary("leave","Leave table"),
+                Button.primary("quit","Bot goes into standby"))
+                .queue();
+
         return PlayState.CHOOSING_PLAYER;
     }
 }
