@@ -2,13 +2,13 @@ package main.game_control_files;
 
 import main.Main;
 import main.Player;
-import main.blackjack_state_handlers.Betting;
-import main.blackjack_state_handlers.IGameAction;
-import main.blackjack_state_handlers.NotPlaying;
-import main.blackjack_state_handlers_buttons.ChoosingPlayerButtonHandlerHandler;
-import main.blackjack_state_handlers_buttons.IGameActionButtonHandler;
-import main.blackjack_state_handlers_buttons.PlayingButtonHandlerHandler;
-import main.blackjack_state_handlers_buttons.AllBetButtonHandler;
+import main.blackjack_state_handlers_text.Betting;
+import main.blackjack_state_handlers_text.IGameAction;
+import main.blackjack_state_handlers_text.NotPlaying;
+import main.blackjack_state_handlers_button.ChoosingPlayerButtonHandlerHandler;
+import main.blackjack_state_handlers_button.IGameActionButtonHandler;
+import main.blackjack_state_handlers_button.PlayingButtonHandlerHandler;
+import main.blackjack_state_handlers_button.AllBetButtonHandler;
 import main.persistence_layer.IPlayerPersistent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -103,9 +103,9 @@ public class GameFlow extends ListenerAdapter {
     /**
      * gets called when the round is over. Prints the Win/Losses of all players in an embed. Afterwards resets the players.
      *
-     * @return Playstate choosing player
+     * @return PlayState choosing player
      */
-    public PlayState roundOver(TextChannel channel) {
+    private PlayState roundOver(TextChannel channel) {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setAuthor(jda.getUserByTag("BlackJackBot#1745").getName(), null,
                 jda.getUserByTag("BlackJackBot#1745").getAvatarUrl());
@@ -120,7 +120,9 @@ public class GameFlow extends ListenerAdapter {
         }
         builder.setFooter("Players can join and leave or start the next round");
         channel.sendMessageEmbeds(builder.build()).queue();
+
         gameActionsButton.resetPlayers();
+
         channel.sendMessage(
                 "BlackJack game started. Press join to join or start or start").
                 setActionRow(Button.primary("join","Click to join the game"),
@@ -128,6 +130,7 @@ public class GameFlow extends ListenerAdapter {
                 Button.primary("leave","Leave table"),
                 Button.primary("quit","Bot goes into standby"))
                 .queue();
+
         return PlayState.CHOOSING_PLAYER;
     }
 }

@@ -1,4 +1,4 @@
-package main.util;
+package main.registration;
 
 import main.Main;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -6,11 +6,11 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.TextChannel;
 
-public class EmbedMessageCreator {
+public class EmbedMessageCreatorRegistration {
 
     private final JDA jda;
 
-    public EmbedMessageCreator(JDA jda) {
+    public EmbedMessageCreatorRegistration(JDA jda) {
         this.jda = jda;
     }
 

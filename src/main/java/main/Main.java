@@ -8,7 +8,7 @@ import main.persistence_layer.IPlayerPersistent;
 import main.persistence_layer.PlayerPersistent;
 import main.registration.RegisterReactionListener;
 import main.util.ConfigReader;
-import main.util.EmbedMessageCreator;
+import main.registration.EmbedMessageCreatorRegistration;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 
@@ -23,7 +23,7 @@ import java.util.Set;
 public class Main {
     public static final String REGISTER_CHANNEL_ID = "851209582205468693";
     public static final String PLAY_CHANNEL_ID = "851209654146957312";
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);re
 
     public static void main(String[] args) throws LoginException, InterruptedException {
 
@@ -36,8 +36,8 @@ public class Main {
 
 
         IPlayerPersistent playerPersistent = new PlayerPersistent(jda);
-        EmbedMessageCreator embedMessageCreator = new EmbedMessageCreator(jda);
-        embedMessageCreator.createRegisterEmbedIfNeeded();
+        EmbedMessageCreatorRegistration embedMessageCreatorRegistration = new EmbedMessageCreatorRegistration(jda);
+        embedMessageCreatorRegistration.createRegisterEmbedIfNeeded();
 
         Thread t1 = new Thread(new Shut(jda, playerPersistent));
         t1.start();

@@ -1,4 +1,4 @@
-package main.blackjack_state_handlers;
+package main.blackjack_state_handlers_text;
 
 import main.Player;
 import main.game_control_files.PlayState;
