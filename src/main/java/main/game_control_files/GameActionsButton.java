@@ -156,6 +156,7 @@ public class GameActionsButton {
         dealer.resetPlayer();
         splitPlayers.clear();
         allHadBlackjack = false;
+        nrOfBustedPlayers = 0;
     }
 
     /**
