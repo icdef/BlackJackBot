@@ -4,23 +4,27 @@ import main.Player;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
-public class PlayerPersistent implements IPlayerPersistent {
+public class PlayerFilePersistent implements IPlayerPersistent {
 
+    private static final Logger logger = LoggerFactory.getLogger(PlayerFilePersistent.class);
     private final String fileRegisteredPlayersPath =
             Paths.get(System.getProperty("user.dir"), "AllPlayers.csv").toString();
     private final Map<String, Player> registeredPlayers = new HashMap<>();
     private final File fileRegisteredPlayers = new File(fileRegisteredPlayersPath);
     private final JDA jda;
 
-    public PlayerPersistent(JDA jda) {
+    public PlayerFilePersistent(JDA jda) {
         this.jda = jda;
     }
 
@@ -39,10 +43,10 @@ public class PlayerPersistent implements IPlayerPersistent {
             try {
                 boolean created = new File(fileRegisteredPlayersPath).createNewFile();
                 if (!created) {
-                    System.out.println("File name already exists");
+                    logger.info("Filename does already exist!");
                 }
-            } catch (IOException ex) {
-                ex.printStackTrace();
+            } catch (IOException | SecurityException ex) {
+                logger.error(Arrays.toString(ex.getStackTrace()));
             }
         }
         return registeredPlayers;
@@ -58,7 +62,7 @@ public class PlayerPersistent implements IPlayerPersistent {
                 channel.sendMessage(user.getAsTag() + " got registered! You start with 1000 coins")
                         .queue(msg -> msg.delete().queueAfter(2, TimeUnit.SECONDS));
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error(Arrays.toString(e.getStackTrace()));
             }
         } else {
             channel.sendMessage("You are already registered")
@@ -73,7 +77,7 @@ public class PlayerPersistent implements IPlayerPersistent {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(Arrays.toString(e.getStackTrace()));
         }
     }
 }

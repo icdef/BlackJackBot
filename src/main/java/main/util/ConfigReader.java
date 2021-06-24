@@ -1,36 +1,38 @@
 package main.util;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+;
 import java.io.IOException;
-import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Properties;
 
 public class ConfigReader {
 
 
     private static ConfigReader INSTANCE;
-
+    private static final Logger logger = LoggerFactory.getLogger(ConfigReader.class);
     private ConfigReader(){
 
     }
 
-    private final String configFilePath =
-            Paths.get(System.getProperty("user.dir"), "src","main","resources","config.properties").toString();
-
-
     public String getToken(){
-        try (FileInputStream inputStream = new FileInputStream(configFilePath)){
-            Properties properties = new Properties();
-            properties.load(inputStream);
-            return properties.getProperty("token");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "";
+            try {
+                Properties properties = new Properties();
+                properties.load(getClass().getClassLoader().getResourceAsStream("config.properties"));
+                return properties.getProperty("token");
+            }
+            catch (IOException e){
+                logger.error(Arrays.toString(e.getStackTrace()));
+            }
+            return null;
+
     }
 
     public static ConfigReader getInstance(){
-        return INSTANCE == null ? new ConfigReader() : INSTANCE;
+        if (INSTANCE == null)
+            INSTANCE = new ConfigReader();
+
+        return INSTANCE;
     }
 }

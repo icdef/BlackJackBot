@@ -5,9 +5,12 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.TextChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EmbedMessageCreatorRegistration {
 
+    private static final Logger logger = LoggerFactory.getLogger(EmbedMessageCreatorRegistration.class);
     private final JDA jda;
 
     public EmbedMessageCreatorRegistration(JDA jda) {
@@ -31,9 +34,11 @@ public class EmbedMessageCreatorRegistration {
     public void createRegisterEmbedIfNeeded() {
         TextChannel channel = jda.getTextChannelById(Main.REGISTER_CHANNEL_ID);
         if (channel == null) {
-            System.out.println("Channel not found!");
-            return;
+           logger.error("TextChannel with id {} not found. ID should be equal to the registration channel",Main.REGISTER_CHANNEL_ID);
+           jda.shutdown();
+           return;
         }
+
         MessageHistory history = new MessageHistory(channel);
         history.retrievePast(1).queue(msgList -> {
             if (msgList.isEmpty()) {

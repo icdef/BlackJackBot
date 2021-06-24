@@ -9,9 +9,11 @@ import main.blackjack_state_handlers_button.ChoosingPlayerButtonHandlerHandler;
 import main.blackjack_state_handlers_button.IGameActionButtonHandler;
 import main.blackjack_state_handlers_button.PlayingButtonHandlerHandler;
 import main.blackjack_state_handlers_button.AllBetButtonHandler;
+import main.non_blackjack_commands.ClearCommand;
 import main.persistence_layer.IPlayerPersistent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -24,6 +26,7 @@ import java.text.NumberFormat;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public class GameFlow extends ListenerAdapter {
 
@@ -37,6 +40,7 @@ public class GameFlow extends ListenerAdapter {
             new EnumMap<>(PlayState.class);
     private final Map<String, Player> registeredPlayers;
     private PlayState playState;
+    private final ClearCommand clearCommand= new ClearCommand();
 
     public GameFlow(PlayState playState, Set<Player> playerSet, IPlayerPersistent playerPersistent,
                     JDA jda) {
@@ -74,11 +78,14 @@ public class GameFlow extends ListenerAdapter {
         }
         String input = event.getMessage().getContentRaw();
         TextChannel channel = event.getChannel();
+        if (input.equals("clear")) {
+            clearCommand.clearChannel(input,channel);
+            return;
+        }
         Player player = registeredPlayers.get(event.getAuthor().getId());
         IGameAction action = playStateIGameActionMap.get(playState);
         if (action != null) {
             playState = action.handleInput(input, player, channel);
-
         }
 
 
@@ -133,4 +140,5 @@ public class GameFlow extends ListenerAdapter {
 
         return PlayState.CHOOSING_PLAYER;
     }
+
 }

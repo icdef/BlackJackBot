@@ -259,7 +259,7 @@ public class GameActionsButton {
 
                 Thread.sleep(500);
             } catch (InterruptedException e) {
-                logger.error("Dealer got interrupted");
+                logger.error("DealerThread {} got interrupted",Thread.currentThread().getName());
                 Thread.currentThread().interrupt();
             }
         }

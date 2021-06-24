@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 
 /**
  * Thread which listens to System.in and shuts down the bot when writing 'exit' into console
@@ -29,15 +30,15 @@ public class Shut implements Runnable {
             while ((line = reader.readLine()) != null) {
                 if (line.equalsIgnoreCase("exit")) {
                     jda.shutdown();
-                    logger.info("Bot is off");
+                    System.out.println("Bot is off");
                     reader.close();
                     break;
                 } else {
-                    logger.warn("Use 'exit' to shutdown the bot");
+                    System.out.println("Write exit to shutdown the bot");
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(Arrays.toString(e.getStackTrace()));
         }
         playerPersistent.writePlayersBackToFile();
 
