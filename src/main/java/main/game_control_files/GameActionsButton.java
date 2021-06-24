@@ -397,67 +397,45 @@ public class GameActionsButton {
         calculateSplitPlayersPayout();
         calculateNonSplitPlayersPayout();
     }
+    private void calculate(Player player, Hand hand){
+        // blackjack
+        if (hand.isBlackJack() && !dealerHand.isBlackJack()) {
+            player.addMoney(player.getBetAmount() * 2.5);
+            player.addWonAmount(player.getBetAmount() * 2.5);
+
+        }
+        // won
+        else if ((!hand.isBusted() && dealerHand.isBusted()) ||
+                (!hand.isBusted() && !dealerHand.isBusted() &&
+                        hand.getCurrentHandValue() > dealerHand.getCurrentHandValue())) {
+            player.addMoney(player.getBetAmount() * 2);
+            player.addWonAmount(player.getBetAmount() * 2);
+
+        }
+        // push
+        else if (!hand.isBusted() && !dealerHand.isBusted() &&
+                hand.getCurrentHandValue() == dealerHand.getCurrentHandValue()) {
+            player.addMoney(player.getBetAmount());
+        }
+        // lost
+        else {
+            player.addWonAmount(player.getBetAmount() * (-1));
+        }
+    }
 
     private void calculateSplitPlayersPayout() {
         // all the cases where a player split
         for (Map.Entry<Player, Player> entry : splitPlayers.entrySet()) {
-            Player fakePlayer = entry.getValue();
-            Hand fakePlayerHand = fakePlayer.getCurrentHand();
+            Hand fakePlayerHand = entry.getValue().getCurrentHand();
             Player realPlayer = entry.getKey();
-
-            // blackjack
-            if (fakePlayerHand.isBlackJack() && !dealerHand.isBlackJack()) {
-                realPlayer.addMoney(realPlayer.getBetAmount() * 2.5);
-                realPlayer.addWonAmount(realPlayer.getBetAmount() * 2.5);
-
-            }
-            // won
-            else if ((!fakePlayerHand.isBusted() && dealerHand.isBusted()) ||
-                    (!fakePlayerHand.isBusted() && !dealerHand.isBusted() &&
-                            fakePlayerHand.getCurrentHandValue() > dealerHand.getCurrentHandValue())) {
-                realPlayer.addMoney(realPlayer.getBetAmount() * 2);
-                realPlayer.addWonAmount(realPlayer.getBetAmount() * 2);
-
-            }
-            // push
-            else if (!fakePlayerHand.isBusted() && !dealerHand.isBusted() &&
-                    fakePlayerHand.getCurrentHandValue() == dealerHand.getCurrentHandValue()) {
-                realPlayer.addMoney(realPlayer.getBetAmount());
-            }
-            // lost
-            else {
-                realPlayer.addWonAmount(realPlayer.getBetAmount() * (-1));
-            }
-
-
+            calculate(realPlayer,fakePlayerHand);
         }
     }
 
     private void calculateNonSplitPlayersPayout() {
         for (Player p : players) {
             Hand pHand = p.getCurrentHand();
-            //blackjack
-            if (pHand.isBlackJack() && !dealerHand.isBlackJack()) {
-                p.addWonAmount(p.getBetAmount() * 2.5);
-                p.addMoney(p.getBetAmount() * 2.5);
-            }
-            // won
-            else if ((!pHand.isBusted() && dealerHand.isBusted()) ||
-                    (!pHand.isBusted() && !dealerHand.isBusted() &&
-                            pHand.getCurrentHandValue() > dealerHand.getCurrentHandValue())) {
-                p.addMoney(p.getBetAmount() * 2);
-                p.addWonAmount(p.getBetAmount() * 2);
-
-            }
-            // push
-            else if (!pHand.isBusted() && !dealerHand.isBusted() &&
-                    pHand.getCurrentHandValue() == dealerHand.getCurrentHandValue()) {
-                p.addMoney(p.getBetAmount());
-            }
-            // lost
-            else {
-                p.addWonAmount(p.getBetAmount() * (-1));
-            }
+            calculate(p,pHand);
         }
     }
 

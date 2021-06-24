@@ -32,7 +32,7 @@ public class Main {
         JDA jda = jdaBuilder.build();
         jda.awaitReady();
         logger.info("Bot is on");
-
+        logger.debug("test");
 
         IPlayerPersistent playerPersistent = new PlayerFilePersistent(jda);
         EmbedMessageCreatorRegistration embedMessageCreatorRegistration = new EmbedMessageCreatorRegistration(jda);
