@@ -40,7 +40,7 @@ public class GameFlow extends ListenerAdapter {
             new EnumMap<>(PlayState.class);
     private final Map<String, Player> registeredPlayers;
     private PlayState playState;
-    private final ClearCommand clearCommand= new ClearCommand();
+
 
     public GameFlow(PlayState playState, Set<Player> playerSet, IPlayerPersistent playerPersistent,
                     JDA jda) {
@@ -78,10 +78,6 @@ public class GameFlow extends ListenerAdapter {
         }
         String input = event.getMessage().getContentRaw();
         TextChannel channel = event.getChannel();
-        if (input.equals("clear")) {
-            clearCommand.clearChannel(input,channel);
-            return;
-        }
         Player player = registeredPlayers.get(event.getAuthor().getId());
         IGameAction action = playStateIGameActionMap.get(playState);
         if (action != null) {

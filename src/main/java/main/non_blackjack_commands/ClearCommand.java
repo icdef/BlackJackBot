@@ -15,13 +15,10 @@ public class ClearCommand {
            history.retrievePast(100).complete();
            while (history.getRetrievedHistory().size() > 1) {
                channel.deleteMessages(history.getRetrievedHistory()).complete();
-               channel.sendMessage("Bot is working, please wait...").complete();
                history = new MessageHistory(channel);
                history.retrievePast(100).complete();
            }
-           // last Bot is working message needs to be deleted as well
-           channel.deleteMessageById(history.getRetrievedHistory().get(0).getId()).queue();
-           channel.sendMessage("Messages deleted")
+           channel.sendMessage("Messages deleted. Thanks for waiting")
                    .queueAfter(1, TimeUnit.SECONDS, m -> m.delete().queueAfter(500, TimeUnit.MILLISECONDS));
        }
 
