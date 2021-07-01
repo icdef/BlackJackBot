@@ -174,14 +174,12 @@ public class GameActionsButton {
         }
 
         // for debugging
-/*
         Player[] playerTestArray = players.toArray(new Player[0]);
         Hand playerHand = playerTestArray[0].getCurrentHand();
         playerHand.removeACardFromHand();
         playerHand.removeACardFromHand();
         playerHand.addCardToHand(new Card(10, "K"));
         playerHand.addCardToHand(new Card(11, "A"));
-*/
 
 
         playersInGame.push(dealer);
@@ -332,8 +330,8 @@ public class GameActionsButton {
      *
      * @return true if allowed. Otherwise false
      */
-    public boolean allowedToDouble() {
-        return activePlayer.getCurrentHand().getHandSize() == 2 && !isPlayerCurrentlySplitting();
+    private boolean allowedToDouble() {
+        return activePlayer.getCurrentHand().getHandSize() == 2;
     }
 
     /**
