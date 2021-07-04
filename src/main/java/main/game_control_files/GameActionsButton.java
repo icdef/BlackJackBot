@@ -174,12 +174,12 @@ public class GameActionsButton {
         }
 
         // for debugging
-        Player[] playerTestArray = players.toArray(new Player[0]);
+        /*Player[] playerTestArray = players.toArray(new Player[0]);
         Hand playerHand = playerTestArray[0].getCurrentHand();
         playerHand.removeACardFromHand();
         playerHand.removeACardFromHand();
         playerHand.addCardToHand(new Card(10, "K"));
-        playerHand.addCardToHand(new Card(11, "A"));
+        playerHand.addCardToHand(new Card(11, "A"));*/
 
 
         playersInGame.push(dealer);

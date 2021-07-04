@@ -38,7 +38,7 @@ public class Hand {
         if (currentHand.size() != 2){
             throw new IllegalStateException("Current Hand from player should be 2 but it is "+ currentHand.size());
         }
-        Card card = currentHand.remove(0);
+        Card card = currentHand.remove(1);
         if (card.getValue() == 11) {
             amountOfAces--;
         }
