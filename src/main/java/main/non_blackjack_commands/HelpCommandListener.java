@@ -4,10 +4,8 @@ import main.Main;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.components.Button;
 import org.jetbrains.annotations.NotNull;
 
 public class HelpCommandListener extends ListenerAdapter {
@@ -25,10 +23,10 @@ public class HelpCommandListener extends ListenerAdapter {
         builder.addField("leave", "leaving the table", false);
         builder.addField("start", "when all players joined, \"start\" starts the round", false);
         builder.addField("bet <amount>", "sets your bet", false);
-        builder.addField("hit", "you hit (blackjack term)", false);
-        builder.addField("stand", "you stand (blackjack term)", false);
-        builder.addField("double", "you double (blackjack term)", false);
-        builder.addField("split", "you split (blackjack term)", false);
+        builder.addField("hit", "take another card", false);
+        builder.addField("stand", "do not take another card", false);
+        builder.addField("double", "double your wager and draw one last card", false);
+        builder.addField("split", "double your wager by playing two hands ", false);
         builder.addField("clear", "clears all messages from chat", false);
         return builder.build();
 
