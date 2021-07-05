@@ -19,7 +19,7 @@ public class RegisterReactionListener extends ListenerAdapter {
 
     @Override
     public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
-        if (event.getUser().isBot()) {
+        if (event.retrieveUser().complete().isBot()) {
             return;
         }
         if (!event.getTextChannel().getId().equals(Main.REGISTER_CHANNEL_ID)) {
@@ -37,7 +37,7 @@ public class RegisterReactionListener extends ListenerAdapter {
 
     @Override
     public void onMessageReactionRemove(@NotNull MessageReactionRemoveEvent event) {
-        if (event.getUser().isBot()) {
+        if (event.retrieveUser().complete().isBot()) {
             return;
         }
         if (!event.getTextChannel().getId().equals(Main.REGISTER_CHANNEL_ID)) {
