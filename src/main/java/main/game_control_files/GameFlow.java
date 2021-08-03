@@ -9,11 +9,9 @@ import main.blackjack_state_handlers_button.ChoosingPlayerButtonHandlerHandler;
 import main.blackjack_state_handlers_button.IGameActionButtonHandler;
 import main.blackjack_state_handlers_button.PlayingButtonHandlerHandler;
 import main.blackjack_state_handlers_button.AllBetButtonHandler;
-import main.non_blackjack_commands.ClearCommand;
 import main.persistence_layer.IPlayerPersistent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -26,7 +24,6 @@ import java.text.NumberFormat;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 public class GameFlow extends ListenerAdapter {
 

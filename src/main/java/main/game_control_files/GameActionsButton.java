@@ -76,7 +76,7 @@ public class GameActionsButton {
         builder.setTitle("Current Table");
         builder.setAuthor(jda.getUserByTag(BOT_TAG).getName(), null,
                 jda.getUserByTag(BOT_TAG).getAvatarUrl());
-        builder.addField(addActiveToNameWhenActivePlayer(dealer), dealer.getCurrentHand().toString(),
+        builder.addField(addActiveToNameWhenActivePlayer(dealer),dealer.getCurrentHand().toString(),
                 false);
         for (Player p : players) {
             builder.addField(addActiveToNameWhenActivePlayer(p), p.getCurrentHand().toString(), false);
@@ -124,6 +124,8 @@ public class GameActionsButton {
         MessageEmbed messageEmbed = createCurrentRoundEmbed();
         event.getHook().editOriginalEmbeds(messageEmbed).setActionRows().completeAfter(1, TimeUnit.SECONDS);
     }
+
+
     private void printCurrentGameAsAcknowledgmentEvent(){
         MessageEmbed messageEmbed = createCurrentRoundEmbed();
         List<Button> buttons = new ArrayList<>();
@@ -271,6 +273,7 @@ public class GameActionsButton {
      */
     public void nextPlayersTurn() {
         activePlayer = playersInGame.pop();
+        logger.debug("Next player is {}", activePlayer.toString());
         if (activePlayer == dealer) {
             return;
         }

@@ -12,6 +12,7 @@ public class ConfigReader {
 
     private static ConfigReader INSTANCE;
     private static final Logger logger = LoggerFactory.getLogger(ConfigReader.class);
+
     private ConfigReader(){
 
     }

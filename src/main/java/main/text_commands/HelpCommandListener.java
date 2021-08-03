@@ -1,4 +1,4 @@
-package main.non_blackjack_commands;
+package main.text_commands;
 
 import main.Main;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -7,8 +7,12 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HelpCommandListener extends ListenerAdapter {
+
+    private static final Logger logger = LoggerFactory.getLogger(HelpCommandListener.class);
 
     private MessageEmbed commandsEmbed(JDA jda) {
         EmbedBuilder builder = new EmbedBuilder();
@@ -45,6 +49,7 @@ public class HelpCommandListener extends ListenerAdapter {
         if (input.equals("help")) {
             event.getAuthor().openPrivateChannel().queue(
                     privateChannel -> privateChannel.sendMessageEmbeds(commandsEmbed(event.getJDA())).queue());
+            logger.info("Send help message to {}",event.getAuthor().getAsTag());
         }
     }
 

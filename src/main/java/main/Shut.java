@@ -22,6 +22,9 @@ public class Shut implements Runnable {
         this.playerPersistent = playerPersistent;
     }
 
+    /**
+     * when writing exit into console the bot shuts down
+     */
     @Override
     public void run() {
         String line = "";

@@ -2,7 +2,7 @@ package main;
 
 import main.game_control_files.GameFlow;
 import main.game_control_files.PlayState;
-import main.non_blackjack_commands.HelpCommandListener;
+import main.text_commands.HelpCommandListener;
 import main.persistence_layer.IPlayerPersistent;
 import main.persistence_layer.PlayerFilePersistent;
 import main.registration.RegisterReactionListener;
@@ -32,7 +32,6 @@ public class Main {
         JDA jda = jdaBuilder.build();
         jda.awaitReady();
         logger.info("Bot is on");
-        logger.debug("test");
 
         IPlayerPersistent playerPersistent = new PlayerFilePersistent(jda);
         EmbedMessageCreatorRegistration embedMessageCreatorRegistration = new EmbedMessageCreatorRegistration(jda);

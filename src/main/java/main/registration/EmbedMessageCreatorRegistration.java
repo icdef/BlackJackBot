@@ -17,6 +17,10 @@ public class EmbedMessageCreatorRegistration {
         this.jda = jda;
     }
 
+    /**
+     * creates the register embed in @param channel
+     * @param channel channel the embed is send to
+     */
     private void createEmbed(TextChannel channel) {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Let's Play BlackJack");
