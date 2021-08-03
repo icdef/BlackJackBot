@@ -15,23 +15,33 @@ public class PlayingButtonHandlerHandler implements IGameActionButtonHandler {
 
     @Override
     public PlayState handleInput(String input, Player player, ButtonClickEvent event) {
-        if (gameActions.isCommandFromCorrectPlayer(player) && input.equals("hit")) {
-            if (gameActions.hit()) {
-                return PlayState.ROUND_OVER;
+        if (gameActions.isCommandFromCorrectPlayer(player)){
+
+            if (input.equals("hit")){
+                if (gameActions.hit()) {
+                    return PlayState.ROUND_OVER;
+                }
             }
-        }
-        if (gameActions.isCommandFromCorrectPlayer(player) && input.equals("stand")) {
-            if (gameActions.stand()) {
-                return PlayState.ROUND_OVER;
+
+            if (input.equals("stand")){
+                if (gameActions.stand()) {
+                    return PlayState.ROUND_OVER;
+                }
             }
-        }
-        if (gameActions.isCommandFromCorrectPlayer(player) && input.equals("double")) {
+
+            if (input.equals("double")){
                 if (gameActions.doubleMove()) {
                     return PlayState.ROUND_OVER;
                 }
+            }
+
+            if (input.equals("split")){
+                gameActions.split();
+            }
+
         }
-        if (gameActions.isCommandFromCorrectPlayer(player) && input.equals("split")) {
-            gameActions.split();
+        else {
+            event.reply("It is not your turn").setEphemeral(true).queue();
         }
 
         return PlayState.PLAYING;
