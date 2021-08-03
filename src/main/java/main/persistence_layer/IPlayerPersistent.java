@@ -27,4 +27,11 @@ public interface IPlayerPersistent {
      * writes all registered players back to the file
      */
     void writePlayersBackToFile();
+
+    /**
+     * gets balance from specified player
+     * @param player whose balance it should return
+     * @return balance in string format
+     */
+    String readPlayerBalance(Player player);
 }

@@ -50,7 +50,7 @@ public class GameFlow extends ListenerAdapter {
     }
 
     private void initializingMaps() {
-        IGameAction notPlaying = new NotPlaying();
+        IGameAction notPlaying = new NotPlaying(jda);
         IGameAction betting = new Betting(playerSet);
         playStateIGameActionMap.put(PlayState.NOT_PLAYING, notPlaying);
         playStateIGameActionMap.put(PlayState.BETTING, betting);
@@ -80,6 +80,7 @@ public class GameFlow extends ListenerAdapter {
         if (action != null) {
             playState = action.handleInput(input, player, channel);
         }
+
 
 
     }

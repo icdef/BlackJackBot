@@ -20,6 +20,7 @@ public class HelpCommandListener extends ListenerAdapter {
                 jda.getUserByTag("BlackJackBot#1745").getAvatarUrl());
         builder.setTitle("Commands for blackjack-table");
         builder.addField("blackjack", "starts the blackjack session", false);
+        builder.addField("balance", "get your current balance", false);
         builder.addField("stop",
                 "stops the blackjack session and bot goes to standby. (only possible when people are able to join and leave)",
                 false);

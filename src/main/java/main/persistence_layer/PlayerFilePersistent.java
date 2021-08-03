@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,10 +24,13 @@ public class PlayerFilePersistent implements IPlayerPersistent {
             Paths.get(System.getProperty("user.dir"), "AllPlayers.csv").toString();
     private final Map<String, Player> registeredPlayers = new HashMap<>();
     private final File fileRegisteredPlayers = new File(fileRegisteredPlayersPath);
-    private final JDA jda;
+    private JDA jda;
 
     public PlayerFilePersistent(JDA jda) {
         this.jda = jda;
+    }
+    public PlayerFilePersistent(){
+
     }
 
     public Map<String, Player> readAlreadyRegisteredPlayers() {
@@ -34,10 +39,10 @@ public class PlayerFilePersistent implements IPlayerPersistent {
         try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(fileRegisteredPlayers)))) {
             while (scanner.hasNext()) {
                 String line = scanner.nextLine();
-                String[] lineSplitted = line.split(";");
-                registeredPlayers.put(lineSplitted[0],
-                        new Player(lineSplitted[0], jda.retrieveUserById(lineSplitted[0]).complete().getAsTag(),
-                                Double.parseDouble(lineSplitted[1])));
+                String[] lineSplit = line.split(";");
+                registeredPlayers.put(lineSplit[0],
+                        new Player(lineSplit[0], jda.retrieveUserById(lineSplit[0]).complete().getAsTag(),
+                                Double.parseDouble(lineSplit[1])));
             }
         } catch (FileNotFoundException e) {
             try {
@@ -79,5 +84,26 @@ public class PlayerFilePersistent implements IPlayerPersistent {
         } catch (IOException e) {
             logger.error(Arrays.toString(e.getStackTrace()));
         }
+    }
+
+    public String readPlayerBalance(Player player){
+        NumberFormat nf = new DecimalFormat("##.###");
+        try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(fileRegisteredPlayers)))) {
+            while (scanner.hasNext()) {
+                String line = scanner.nextLine();
+                String[] lineSplit = line.split(";");
+                if (lineSplit[0].equals(player.getUuid())){
+                    return nf.format(Double.parseDouble(lineSplit[1]));
+                }
+            }
+
+        }
+        catch (FileNotFoundException ex){
+            jda.openPrivateChannelById(player.getUuid()).queue(conn -> conn.sendMessage("Something went wrong!").queue());
+            logger.error("Could not find file in path {} to read balance from player {} with uuid {}", fileRegisteredPlayersPath, player.getNameNoTag(), player.getUuid());
+            logger.error("Error: {}", ex.getMessage());
+            logger.error("Stacktrace: {}", Arrays.toString(ex.getStackTrace()));
+        }
+        return null;
     }
 }
