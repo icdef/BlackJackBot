@@ -1,22 +1,23 @@
-package main;
+package java_files;
 
-import main.game_control_files.GameFlow;
-import main.game_control_files.PlayState;
-import main.text_commands.HelpCommandListener;
-import main.persistence_layer.IPlayerPersistent;
-import main.persistence_layer.PlayerFilePersistent;
-import main.registration.RegisterReactionListener;
-import main.util.ConfigReader;
-import main.registration.EmbedMessageCreatorRegistration;
+
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.security.auth.login.LoginException;
+import java_files.game_control_files.GameFlow;
+import java_files.game_control_files.PlayState;
+import java_files.persistence_layer.IPlayerPersistent;
+import java_files.persistence_layer.PlayerFilePersistent;
+import java_files.registration.EmbedMessageCreatorRegistration;
+import java_files.registration.RegisterReactionListener;
+import java_files.text_commands.HelpCommandListener;
+
 import java.util.HashSet;
 import java.util.Set;
-
+import java_files.utility.ConfigReader;
 
 
 public class Main {

@@ -1,12 +1,13 @@
-package main.persistence_layer;
+package java_files.persistence_layer;
 
-import main.Player;
+
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java_files.Player;
 import java.io.*;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
@@ -17,7 +18,7 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
-public class PlayerFilePersistent implements IPlayerPersistent {
+public class PlayerFilePersistent implements IPlayerPersistent{
 
     private static final Logger logger = LoggerFactory.getLogger(PlayerFilePersistent.class);
     private final String fileRegisteredPlayersPath =

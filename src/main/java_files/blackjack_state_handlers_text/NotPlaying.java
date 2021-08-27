@@ -1,14 +1,16 @@
-package main.blackjack_state_handlers_text;
+package java_files.blackjack_state_handlers_text;
 
-import main.Player;
-import main.game_control_files.PlayState;
-import main.text_commands.BalanceCommand;
-import main.text_commands.ClearCommand;
+
+import java_files.game_control_files.PlayState;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.interactions.components.Button;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java_files.Player;
+import java_files.text_commands.BalanceCommand;
+import java_files.text_commands.ClearCommand;
 
 public class NotPlaying implements IGameAction {
 

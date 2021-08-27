@@ -1,6 +1,6 @@
-package main.text_commands;
+package java_files.text_commands;
 
-import main.Main;
+import java_files.Main;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;

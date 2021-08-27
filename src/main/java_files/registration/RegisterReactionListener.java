@@ -1,7 +1,8 @@
-package main.registration;
+package java_files.registration;
 
-import main.Main;
-import main.persistence_layer.IPlayerPersistent;
+
+import java_files.Main;
+import java_files.persistence_layer.IPlayerPersistent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;

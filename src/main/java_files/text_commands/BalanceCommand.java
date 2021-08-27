@@ -1,9 +1,10 @@
-package main.text_commands;
+package java_files.text_commands;
 
-import main.Player;
-import main.persistence_layer.IPlayerPersistent;
-import main.persistence_layer.PlayerFilePersistent;
 import net.dv8tion.jda.api.JDA;
+
+import java_files.Player;
+import java_files.persistence_layer.IPlayerPersistent;
+import java_files.persistence_layer.PlayerFilePersistent;
 
 
 public class BalanceCommand {
