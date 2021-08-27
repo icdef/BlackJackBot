@@ -1,4 +1,4 @@
-package main.game_control_files;
+package java_files.game_control_files;
 
 public enum PlayState {
     PLAYING,

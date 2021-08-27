@@ -1,9 +1,9 @@
-package main.game_control_files;
+package java_files.game_control_files;
 
-import main.Player;
-import main.playing_cards.Card;
-import main.playing_cards.DeckUtility;
-import main.playing_cards.Hand;
+
+import java_files.playing_cards.Card;
+import java_files.playing_cards.DeckUtility;
+import java_files.playing_cards.Hand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -12,6 +12,8 @@ import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.Button;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java_files.Player;
 
 import java.util.*;
 import java.util.List;

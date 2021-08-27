@@ -1,4 +1,4 @@
-package main.playing_cards;
+package java_files.playing_cards;
 
 import java.util.ArrayList;
 import java.util.List;

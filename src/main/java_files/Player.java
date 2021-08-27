@@ -1,6 +1,7 @@
-package main;
+package java_files;
 
-import main.playing_cards.Hand;
+
+import java_files.playing_cards.Hand;
 
 import java.util.Objects;
 

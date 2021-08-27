@@ -1,6 +1,5 @@
-package main;
+package java_files;
 
-import main.persistence_layer.IPlayerPersistent;
 import net.dv8tion.jda.api.JDA;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java_files.persistence_layer.IPlayerPersistent;
 import java.util.Arrays;
 
 /**

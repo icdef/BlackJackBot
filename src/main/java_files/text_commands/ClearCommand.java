@@ -1,4 +1,4 @@
-package main.text_commands;
+package java_files.text_commands;
 
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;

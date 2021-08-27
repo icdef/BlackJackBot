@@ -1,15 +1,7 @@
-package main.game_control_files;
+package java_files.game_control_files;
 
-import main.Main;
-import main.Player;
-import main.blackjack_state_handlers_text.Betting;
-import main.blackjack_state_handlers_text.IGameAction;
-import main.blackjack_state_handlers_text.NotPlaying;
-import main.blackjack_state_handlers_button.ChoosingPlayerButtonHandlerHandler;
-import main.blackjack_state_handlers_button.IGameActionButtonHandler;
-import main.blackjack_state_handlers_button.PlayingButtonHandlerHandler;
-import main.blackjack_state_handlers_button.AllBetButtonHandler;
-import main.persistence_layer.IPlayerPersistent;
+
+import java_files.Main;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -19,6 +11,15 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.Button;
 import org.jetbrains.annotations.NotNull;
 
+import java_files.Player;
+import java_files.blackjack_state_handlers_button.AllBetButtonHandler;
+import java_files.blackjack_state_handlers_button.ChoosingPlayerButtonHandlerHandler;
+import java_files.blackjack_state_handlers_button.IGameActionButtonHandler;
+import java_files.blackjack_state_handlers_button.PlayingButtonHandlerHandler;
+import java_files.blackjack_state_handlers_text.Betting;
+import java_files.blackjack_state_handlers_text.IGameAction;
+import java_files.blackjack_state_handlers_text.NotPlaying;
+import java_files.persistence_layer.IPlayerPersistent;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.EnumMap;

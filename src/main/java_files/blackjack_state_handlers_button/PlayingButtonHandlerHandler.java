@@ -1,9 +1,11 @@
-package main.blackjack_state_handlers_button;
+package java_files.blackjack_state_handlers_button;
 
-import main.Player;
-import main.game_control_files.GameActionsButton;
-import main.game_control_files.PlayState;
+
+import java_files.game_control_files.GameActionsButton;
+import java_files.game_control_files.PlayState;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
+
+import java_files.Player;
 
 public class PlayingButtonHandlerHandler implements IGameActionButtonHandler {
 

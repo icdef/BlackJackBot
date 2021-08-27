@@ -1,14 +1,17 @@
-package unitTests;
+package java_files.unitTests;
 
-import main.playing_cards.Card;
-import main.playing_cards.Hand;
+
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java_files.playing_cards.Card;
+import java_files.playing_cards.Hand;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-class HandUnitTests {
+public class TestHandUnit {
 
     private static Hand hand;
     private static Card jack;
