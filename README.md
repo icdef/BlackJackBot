@@ -5,6 +5,6 @@ Before being able to play blackjack the user needs to be registered. This happen
 ### Commands
 **blackjack**: Starts the session. Afterwards the players interact with the bot by pressing the given buttons
 
-**balance \<Player\>**: Shows the current balance of the Player
+**balance \<Player\>**: Bot sends the player a private Message with the current balance
 
 **clear**: Clears all Messages from the channel
