@@ -5,7 +5,7 @@ import game_control_files.GameActionsButton;
 import game_control_files.PlayState;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 
-import PlayerEntity.Player;
+import player_entity.Player;
 
 public class PlayingButtonHandlerHandler implements IGameActionButtonHandler {
 

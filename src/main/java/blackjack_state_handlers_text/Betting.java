@@ -4,7 +4,7 @@ package blackjack_state_handlers_text;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.interactions.components.Button;
 
-import PlayerEntity.Player;
+import player_entity.Player;
 import game_control_files.PlayState;
 
 import java.text.DecimalFormat;
@@ -59,7 +59,7 @@ public class Betting implements IGameAction {
         }
 
         if (didAllPlayersBet()) {
-           channel.sendMessage("All players entered their bet. You can change your bet or press the button to start").
+           channel.sendMessage("All players entered their bet. Press the button to start").
                    setActionRow(Button.primary("roundStart","start")).queue();
            return PlayState.ALL_BETS_IN;
 

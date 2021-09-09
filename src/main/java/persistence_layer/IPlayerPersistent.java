@@ -4,7 +4,7 @@ package persistence_layer;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 
-import PlayerEntity.Player;
+import player_entity.Player;
 
 import java.util.Map;
 

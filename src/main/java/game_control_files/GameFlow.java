@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.Button;
 import org.jetbrains.annotations.NotNull;
 
-import PlayerEntity.Player;
+import player_entity.Player;
 import blackjack_state_handlers_button.AllBetButtonHandler;
 import blackjack_state_handlers_button.ChoosingPlayerButtonHandlerHandler;
 import blackjack_state_handlers_button.IGameActionButtonHandler;

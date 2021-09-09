@@ -4,7 +4,7 @@ import game_control_files.PlayState;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.interactions.components.Button;
 
-import PlayerEntity.Player;
+import player_entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +72,7 @@ public class ChoosingPlayerButtonHandlerHandler implements IGameActionButtonHand
                         setActionRow(buttonsForChoosingPlayerStage())
                         .queue();
             } else {
-                event.editMessage("Everyone enter your bet amount").setActionRows().queue();
+                event.editMessage("Everyone enter your bet amount (just a number, e.g. 100)").setActionRows().queue();
                 return PlayState.BETTING;
             }
         }

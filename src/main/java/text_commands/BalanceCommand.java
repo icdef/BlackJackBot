@@ -2,7 +2,7 @@ package text_commands;
 
 import net.dv8tion.jda.api.JDA;
 
-import PlayerEntity.Player;
+import player_entity.Player;
 
 import persistence_layer.IPlayerPersistent;
 import persistence_layer.PlayerFilePersistent;

@@ -1,4 +1,4 @@
-package PlayerEntity;
+package player_entity;
 
 import playing_cards.Hand;
 

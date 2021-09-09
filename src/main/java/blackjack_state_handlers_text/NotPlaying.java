@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.interactions.components.Button;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import PlayerEntity.Player;
+import player_entity.Player;
 import text_commands.BalanceCommand;
 import text_commands.ClearCommand;
 

@@ -1,6 +1,6 @@
 package main;
 
-import PlayerEntity.Player;
+import player_entity.Player;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 

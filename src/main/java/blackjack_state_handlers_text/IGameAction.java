@@ -6,7 +6,7 @@ package blackjack_state_handlers_text;
 import game_control_files.PlayState;
 import net.dv8tion.jda.api.entities.TextChannel;
 
-import PlayerEntity.Player;
+import player_entity.Player;
 
 public interface IGameAction {
     /**
