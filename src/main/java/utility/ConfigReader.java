@@ -17,6 +17,10 @@ public class ConfigReader {
 
     }
 
+    /**
+     *
+     * @return Bot token as String
+     */
     public String getToken(){
             try {
                 Properties properties = new Properties();
@@ -30,6 +34,10 @@ public class ConfigReader {
 
     }
 
+    /**
+     * There is only one instance of the config reader
+     * @return Instance of the ConfigReader
+     */
     public static ConfigReader getInstance(){
         if (INSTANCE == null)
             INSTANCE = new ConfigReader();

@@ -15,7 +15,13 @@ public class HelpCommandListener extends ListenerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(HelpCommandListener.class);
 
+    /**
+     * build embed with all commands regarding blackjack
+     * @param jda jda from bot
+     * @return MessageEmbed
+     */
     private MessageEmbed commandsEmbed(JDA jda) {
+        logger.trace("method call commandsEmbed with {}",jda);
         EmbedBuilder builder = new EmbedBuilder();
         builder.setAuthor(jda.getUserByTag("BlackJackBot#1745").getName(), null,
                 jda.getUserByTag("BlackJackBot#1745").getAvatarUrl());

@@ -18,6 +18,7 @@ public class ClearCommand {
      * @param channel messages get deleted from this channel
      */
    public void clearChannel(TextChannel channel){
+       logger.trace("method call clearChannel with {}",channel);
            List<Message> channelMessages;
            MessageHistory history = new MessageHistory(channel);
            channel.sendMessage("Bot is working, please wait...").complete();

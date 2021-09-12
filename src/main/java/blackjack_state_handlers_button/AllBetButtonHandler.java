@@ -1,6 +1,9 @@
 package blackjack_state_handlers_button;
 
 
+import main.Main;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import player_entity.Player;
 import game_control_files.GameActionsButton;
 import game_control_files.PlayState;
@@ -15,6 +18,7 @@ public class AllBetButtonHandler implements IGameActionButtonHandler{
     private final Set<Player> playerSet;
     private final GameActionsButton gameActionsButton;
 
+    private static final Logger logger = LoggerFactory.getLogger(AllBetButtonHandler.class);
     public AllBetButtonHandler(Set<Player> playerSet, GameActionsButton gameActionsButton) {
         this.playerSet = playerSet;
         this.gameActionsButton = gameActionsButton;
@@ -22,7 +26,7 @@ public class AllBetButtonHandler implements IGameActionButtonHandler{
 
     @Override
     public PlayState handleInput(String input, Player player, ButtonClickEvent event) {
-
+        logger.trace("Method call handleInput with {} {} {}",input,player,event);
         if (input.equals("roundStart")){
             event.deferEdit().queue();
             gameActionsButton.setPlayers(playerSet);

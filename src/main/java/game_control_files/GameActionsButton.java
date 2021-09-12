@@ -62,6 +62,7 @@ public class GameActionsButton {
      * @return true when the param player equals to active player. Otherwise false
      */
     public boolean isCommandFromCorrectPlayer(Player player) {
+        logger.trace("method call isCommandFromCorrectPlayer with {}",player);
         if (player == null) {
             return false;
         }

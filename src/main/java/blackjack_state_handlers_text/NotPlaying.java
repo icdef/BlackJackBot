@@ -24,6 +24,7 @@ public class NotPlaying implements IGameAction {
 
     @Override
     public PlayState handleInput(String input, Player player, TextChannel channel) {
+        logger.trace("Method call handle Input with {} {} {}",input,player,channel);
         if (input.equals("blackjack")) {
             channel.sendMessage(
                     "BlackJack game started. PlayerEntity.Player can type join to join the game. Type start to start the round")
@@ -35,6 +36,7 @@ public class NotPlaying implements IGameAction {
 
         if (input.equals("clear")) {
            clearCommand.clearChannel(channel);
+
         }
         if (input.equals("balance")) {
             balanceCommand.showBalance(player);

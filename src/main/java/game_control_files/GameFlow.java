@@ -51,6 +51,9 @@ public class GameFlow extends ListenerAdapter {
         initializingMaps();
     }
 
+    /**
+     * initializes the data structures which control the game flow and game states
+     */
     private void initializingMaps() {
         IGameAction notPlaying = new NotPlaying(jda);
         IGameAction betting = new Betting(playerSet);
@@ -78,6 +81,10 @@ public class GameFlow extends ListenerAdapter {
         String input = event.getMessage().getContentRaw();
         TextChannel channel = event.getChannel();
         Player player = registeredPlayers.get(event.getAuthor().getId());
+        if (player == null){
+            channel.sendMessage("Register yourself first").queue();
+            return;
+        }
         IGameAction action = playStateIGameActionMap.get(playState);
         if (action != null) {
             playState = action.handleInput(input, player, channel);
@@ -92,6 +99,10 @@ public class GameFlow extends ListenerAdapter {
         String input = event.getButton().getId();
         TextChannel channel = event.getTextChannel();
         Player player = registeredPlayers.get(event.getUser().getId());
+        if (player == null){
+            event.reply("Register yourself first").queue();
+            return;
+        }
         gameActionsButton.setEvent(event);
         IGameActionButtonHandler buttonAction = playStateIGameActionButtonMap.get(playState);
         if (buttonAction != null) {

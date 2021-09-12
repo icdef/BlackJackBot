@@ -14,7 +14,7 @@ public interface IGameAction {
      *
      * @param input   command from player
      * @param player  player who wrote the command
-     * @param channel textchannel where the command was written
+     * @param channel textChannel where the command was written
      * @return the play state after the command was executed
      */
     PlayState handleInput(String input, Player player, TextChannel channel);

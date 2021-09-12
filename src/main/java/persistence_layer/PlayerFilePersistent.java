@@ -35,6 +35,10 @@ public class PlayerFilePersistent implements IPlayerPersistent{
 
     }
 
+    /**
+     * Reads the AllPlayers.csv file and returns a Map with already registered players
+     * @return Map with key UUID from player and value Player object from player
+     */
     public Map<String, Player> readAlreadyRegisteredPlayers() {
 
         // will need to refactor when moving file
@@ -59,6 +63,11 @@ public class PlayerFilePersistent implements IPlayerPersistent{
         return registeredPlayers;
     }
 
+    /**
+     * register a new player
+     * @param user    the new PlayerEntity.Player
+     * @param channel text channel where the feedback is written to
+     */
     public void registerPlayer(User user, TextChannel channel) {
         if (!registeredPlayers.containsKey(user.getId())) {
             try (
@@ -77,6 +86,9 @@ public class PlayerFilePersistent implements IPlayerPersistent{
         }
     }
 
+    /**
+     * to save the progress of the player's balances the new balances are written back to the file
+     */
     public void writePlayersBackToFile() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileRegisteredPlayers, false))) {
             for (Map.Entry<String, Player> entry : registeredPlayers.entrySet()) {
@@ -88,6 +100,11 @@ public class PlayerFilePersistent implements IPlayerPersistent{
         }
     }
 
+    /**
+     * checks the file and returns the balance of a player
+     * @param player whose balance it should return
+     * @return balance of player as String
+     */
     public String readPlayerBalance(Player player){
         NumberFormat nf = new DecimalFormat("##.###");
         try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(fileRegisteredPlayers)))) {

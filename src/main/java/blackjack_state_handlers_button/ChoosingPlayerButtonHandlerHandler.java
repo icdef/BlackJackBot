@@ -1,9 +1,12 @@
 package blackjack_state_handlers_button;
 
 import game_control_files.PlayState;
+import main.Main;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.interactions.components.Button;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import player_entity.Player;
 
 import java.util.ArrayList;
@@ -14,12 +17,17 @@ import java.util.concurrent.TimeUnit;
 public class ChoosingPlayerButtonHandlerHandler implements IGameActionButtonHandler {
 
     private final Set<Player> playerSet;
-
+    private static final Logger logger = LoggerFactory.getLogger(ChoosingPlayerButtonHandlerHandler.class);
     public ChoosingPlayerButtonHandlerHandler(Set<Player> playerSet) {
         this.playerSet = playerSet;
     }
 
+    /**
+     * Generates 4 buttons for the user to interact with.
+     * @return a list of buttons
+     */
     private List<Button> buttonsForChoosingPlayerStage(){
+        logger.trace("Method call buttonsForChoosingPlayerStage");
         List<Button> buttons = new ArrayList<>();
         buttons.add(Button.primary("join","Click to join the game"));
         buttons.add(Button.primary("start","Click to start the round"));
@@ -30,6 +38,7 @@ public class ChoosingPlayerButtonHandlerHandler implements IGameActionButtonHand
 
     @Override
     public PlayState handleInput(String input, Player player, ButtonClickEvent event) {
+        logger.trace("Method call handleInput with {} {} {}",input,player,event);
         if (input.equals("join")) {
             if (player == null) {
                 event.editMessage("Please register yourself first").
