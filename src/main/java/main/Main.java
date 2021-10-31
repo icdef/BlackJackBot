@@ -28,9 +28,9 @@ public class Main {
 
     public static void main(String[] args) throws LoginException, InterruptedException {
 
-        ConfigReader configReader = ConfigReader.getInstance();
+
         JDABuilder jdaBuilder =
-                JDABuilder.createDefault(configReader.getToken());
+                JDABuilder.createDefault(ConfigReader.getToken());
         JDA jda = jdaBuilder.build();
         jda.awaitReady();
         logger.info("Bot is on");

@@ -9,22 +9,17 @@ import java.util.Properties;
 
 public class ConfigReader {
 
-
-    private static ConfigReader INSTANCE;
     private static final Logger logger = LoggerFactory.getLogger(ConfigReader.class);
 
-    private ConfigReader(){
-
-    }
 
     /**
      *
      * @return Bot token as String
      */
-    public String getToken(){
+    public static String getToken(){
             try {
                 Properties properties = new Properties();
-                properties.load(getClass().getClassLoader().getResourceAsStream("config.properties"));
+                properties.load(ConfigReader.class.getClassLoader().getResourceAsStream("config.properties"));
                 return properties.getProperty("token");
             }
             catch (IOException e){
@@ -34,14 +29,5 @@ public class ConfigReader {
 
     }
 
-    /**
-     * There is only one instance of the config reader
-     * @return Instance of the ConfigReader
-     */
-    public static ConfigReader getInstance(){
-        if (INSTANCE == null)
-            INSTANCE = new ConfigReader();
 
-        return INSTANCE;
-    }
 }
