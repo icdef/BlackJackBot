@@ -1,5 +1,5 @@
 # BlackJackBot
-A Bot where discord users can play blackjack.
+A private discord bot where users can play blackjack.
 ## Usage
 Before being able to play blackjack the user needs to be registered. This happens by reacting to an emote in the registration channel of the server.
 ### Commands
@@ -7,4 +7,4 @@ Before being able to play blackjack the user needs to be registered. This happen
 
 **balance** __*Player*__: Bot sends the player a private Message with the current balance
 
-**clear**: Clears all Messages from the channel
+**clear**: Clears all Messages from the blackjack channel
